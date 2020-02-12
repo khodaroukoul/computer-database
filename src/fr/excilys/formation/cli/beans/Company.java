@@ -6,7 +6,10 @@ public class Company {
 	
 	public Company() {
 		super();
-		// TODO Auto-generated constructor stub
+	}
+
+	public Company(int id) {
+		this.id = id;
 	}
 
 	public Company(int id, String name) {
@@ -29,6 +32,11 @@ public class Company {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public String toString() {
+		return "Company [id=" + id + ", name=" + name + "]";
 	}
 	
 

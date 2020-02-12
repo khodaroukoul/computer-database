@@ -1,89 +1,92 @@
 package fr.excilys.formation.cli.dao;
 
-import java.sql.Date;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.excilys.formation.cli.beans.Company;
 import fr.excilys.formation.cli.beans.Computer;
+import fr.excilys.formation.cli.jdbc.ConnectionMySQL;
 
 public class ComputerDAO extends DAO<Computer> {
 //list is working as a database
 List<Computer> computers = new ArrayList<Computer>();
-PreparedStatement prepare;
+Computer computer;
+Company company;
 
-@Override
-public List<Computer> getList() {
-	 try {
-		 ResultSet rst = this.connect.createStatement(
-			       	ResultSet.TYPE_SCROLL_INSENSITIVE, 
-			        ResultSet.CONCUR_UPDATABLE).executeQuery("Select * From computer");
-		 while (rst.next()) {
-			 Computer computer = new Computer(
-					 rst.getInt("id"), 
-					 rst.getString("name"),
-					 rst.getDate("introduced"),
-					 rst.getDate("discontinued"),
-					 rst.getInt("company_id"));
-			 
-			 computers.add(computer);
-		    }
-	} catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	return computers;
+private static volatile ComputerDAO instance = null;
+private ComputerDAO() {
+      super();
+}
+
+public final static ComputerDAO getInstance() {
+      if (ComputerDAO.instance == null) {
+     	 synchronized(ComputerDAO.class) {
+           if (ComputerDAO.instance == null) {
+        	   ComputerDAO.instance = new ComputerDAO();
+           }
+         }
+      }
+      return ComputerDAO.instance;
 }
 
 
+@Override
 public Computer create(Computer obj) {
-	try {
-		prepare = this.connect.prepareStatement(
-				"INSERT INTO computer (id, name, introduced, discontinued, company_id)"+
-		                          			"VALUES(?, ?, ?, ?, ?)");
+	try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
+			PreparedStatement prepare = connect.prepareStatement(
+					"INSERT INTO computer (id, name, introduced, discontinued, company_id)"+
+			                          			"VALUES(?, ?, ?, ?, ?)");
+			) {
+		
 
 		prepare.setInt(1, obj.getId());
 		prepare.setString(2, obj.getName());
-		prepare.setDate(3,(Date) obj.getIntroduced());
-		prepare.setDate(4,(Date) obj.getDiscontinued());
-		prepare.setInt(5,obj.getCompany_id());
+		prepare.setTimestamp(3, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced()):null );
+		prepare.setTimestamp(4, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued()):null );
+		prepare.setInt(5,obj.getCompany().getId());
 		prepare.executeUpdate();
 			
 	} catch (SQLException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	}
 	
     return obj;
 }
 
-public void delete(Computer obj) {
-	try {
-		prepare = this.connect.prepareStatement("DELETE FROM computer WHERE id = ?");
 
-		prepare.setInt(1, obj.getId());
-		/*prepare.setString(2, obj.getName());
-		prepare.setDate(3,(Date) obj.getIntroduced());
-		prepare.setDate(4,(Date) obj.getDiscontinued());
-		prepare.setInt(5,obj.getCompany_id());*/
+@Override
+public boolean delete(int id) {
+	try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
+			PreparedStatement prepare = connect.prepareStatement("DELETE FROM computer WHERE id = ?");
+			) {		
+		prepare.setInt(1, id);
 		prepare.executeUpdate();
 
     } catch (SQLException e) {
             e.printStackTrace();
+            return false;
     }
+	return true;
 }
- 
+
+
+@Override
 public Computer update(Computer obj) {
-try {
-	prepare = this.connect.prepareStatement("UPDATE computer SET name = ?, introduced = ?,"
-			+ "discontinued = ?, company_id = ? WHERE id = ?");
-	prepare.setInt(5, obj.getId());
+try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
+		PreparedStatement prepare = connect.prepareStatement("UPDATE computer SET name = ?, introduced = ?,"
+				+ "discontinued = ?, company_id = ? WHERE id = ?");
+		) {
+	
 	prepare.setString(1, obj.getName());
-	prepare.setDate(2,(Date) obj.getIntroduced());
-	prepare.setDate(3,(Date) obj.getDiscontinued());
-	prepare.setInt(4,obj.getCompany_id());
+	prepare.setTimestamp(2, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced()):null );
+	prepare.setTimestamp(3, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued()):null );
+	prepare.setInt(4,obj.getCompany().getId());
+	prepare.setInt(5, obj.getId());
 	prepare.executeUpdate();
 	
 } catch (SQLException e) {
@@ -92,5 +95,91 @@ try {
 
 return obj;
 }
- 
+
+
+@Override
+public Computer find(int id) {
+	try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
+			ResultSet rst = connect.createStatement(
+			       	ResultSet.TYPE_SCROLL_INSENSITIVE, 
+			        ResultSet.CONCUR_UPDATABLE).
+				executeQuery("Select cp.id, cp.name, cp.introduced, cp.discontinued, co.id as coId, co.name as coName"
+						+ " from computer as cp left join company as co on cp.company_id = co.id"
+						+ " where cp.id="+id);
+			) {
+		 
+		 rst.first();
+		 company = new Company(rst.getInt("coId"),rst.getString("coName"));
+		 computer = new Computer(
+					 rst.getInt("id"), 
+					 rst.getString("name"),
+					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime():null,
+					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime():null,
+							 company);
+
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	return computer;
+}
+
+
+@Override
+public List<Computer> getList() {
+	 
+	try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
+			PreparedStatement prepare = connect.prepareStatement("Select * From computer");
+			ResultSet rst = prepare.executeQuery();
+			 ) {
+		
+		 while (rst.next()) {
+			 company = new Company(rst.getInt("company_id"));
+			 computer = new Computer(
+					 rst.getInt("id"), 
+					 rst.getString("name"),
+					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime():null,
+					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime():null,
+					 company);
+			 
+			 computers.add(computer);
+		    }
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	return computers;
+}
+
+
+public List<Computer> getListPerPage(int noPage, int nbLine) {
+	ResultSet rst = null;
+	try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
+			PreparedStatement prepare = connect.prepareStatement("Select * From computer limit ?, ?");
+			 ) {
+
+		 prepare.setInt(1, (noPage-1)*nbLine);
+		 prepare.setInt(2, nbLine);
+		 rst = prepare.executeQuery();
+		 while (rst.next()) {
+			 company = new Company(rst.getInt("company_id"));
+			 computer = new Computer(
+					 rst.getInt("id"), 
+					 rst.getString("name"),
+					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime():null,
+					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime():null,
+					 company);
+			 
+			 computers.add(computer);
+		    }
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}finally {
+		try {
+			rst.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	return computers;
+}
+
 }

@@ -1,3 +1,4 @@
+import java.time.LocalDateTime;
 import java.util.List;
 
 import fr.excilys.formation.cli.beans.Company;
@@ -9,30 +10,44 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		CompanyDAO companyDao = new CompanyDAO();
-		// Displaying Data
-		List<Company> company = companyDao.getList();
-		for(Company comp : company) {
-			System.out.println(comp.getName());			
+		// Displaying company Data
+		List<Company> company = CompanyDAO.getInstance().getList();
+		for(Company co : company) {
+			System.out.println(co.toString());			
 		}
+
+		System.out.println("----------------------------------------");
+		System.out.println("****************************************");
+/*
+		// Displaying computer Data
+		List<Computer> computers = ComputerDAO.getInstance().getList();
+		for(Computer cp : computers) {
+			System.out.println(cp.toString());			
+		}
+		*/
+		System.out.println("----------------------------------------");
+		System.out.println("****************************************");
 		
-		ComputerDAO computerDao = new ComputerDAO();
+		// Displaying 10 computer Data in page 2
+		List<Computer> computers = ComputerDAO.getInstance().getListPerPage(2,10);
+		for(Computer cp : computers) {
+			System.out.println(cp.toString());
+			}
+		System.out.println("----------------------------------------");
+		System.out.println("****************************************");
+		
 		Computer computer = new Computer();
+		
 		computer.setId(1000);
 		computer.setName("ChromeBook");
-		computer.setIntroduced(null);
+		computer.setIntroduced(LocalDateTime.now());
 		computer.setDiscontinued(null);
-		computer.setCompany_id(1);
-		//computerDao.create(computer);
-		computer.setName("my chrome");
-		computerDao.update(computer);
-		//computerDao.delete(computer);
-		
-		// Displaying Data
-		/*List<Computer> computer = computerDao.getList();
-		for(Computer comp : computer) {
-			System.out.println(comp.getName());			
-		}*/
-		
+		computer.setCompany(new Company(1));
+		ComputerDAO.getInstance().delete(1000);
+		ComputerDAO.getInstance().create(computer);
+		computer.setName("ChromeM");
+		ComputerDAO.getInstance().update(computer);
+		computer = ComputerDAO.getInstance().find(1000);
+		System.out.println(computer.toString());		
 	}
 }

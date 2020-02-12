@@ -1,25 +1,23 @@
 package fr.excilys.formation.cli.beans;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 public class Computer {
 	private int id;
 	private String name;
-	private Date introduced;
-	private Date discontinued;
-	private int company_id;
+	private LocalDateTime introduced;
+	private LocalDateTime discontinued;
+	private Company company;
 	
 	public Computer() {
-		// TODO Auto-generated constructor stub
 	}
 	
-	public Computer(int id, String name, Date introduced, Date discontinued, int company_id) {
-		super();
+	public Computer(int id, String name, LocalDateTime introduced, LocalDateTime discontinued, Company company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
 		this.discontinued = discontinued;
-		this.company_id = company_id;
+		this.company = company;
 	}
 
 	public int getId() {
@@ -39,27 +37,34 @@ public class Computer {
 	}
 
 
-	public Date getIntroduced() {
+	public LocalDateTime getIntroduced() {
 		return introduced;
 	}
 
-	public void setIntroduced(Date introduced) {
+	public void setIntroduced(LocalDateTime introduced) {
 		this.introduced = introduced;
 	}
 
-	public Date getDiscontinued() {
+	public LocalDateTime getDiscontinued() {
 		return discontinued;
 	}
 
-	public void setDiscontinued(Date discontinued) {
+	public void setDiscontinued(LocalDateTime discontinued) {
 		this.discontinued = discontinued;
 	}
 
-	public int getCompany_id() {
-		return company_id;
+	public Company getCompany() {
+		return company;
 	}
 
-	public void setCompany_id(int company_id) {
-		this.company_id = company_id;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
+
+	@Override
+	public String toString() {
+		return "Computer [id=" + id + ", name=" + name + ", introduced=" + introduced + ", discontinued=" + discontinued
+				+ ", company=" + company.getName() + "]";
+	}
+	
 }
