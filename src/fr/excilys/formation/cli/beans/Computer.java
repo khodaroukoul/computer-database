@@ -1,18 +1,18 @@
 package fr.excilys.formation.cli.beans;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Computer {
 	private int id;
 	private String name;
-	private LocalDateTime introduced;
-	private LocalDateTime discontinued;
+	private LocalDate introduced;
+	private LocalDate discontinued;
 	private Company company;
 	
 	public Computer() {
 	}
 	
-	public Computer(int id, String name, LocalDateTime introduced, LocalDateTime discontinued, Company company) {
+	public Computer(int id, String name, LocalDate introduced, LocalDate discontinued, Company company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = introduced;
@@ -37,19 +37,19 @@ public class Computer {
 	}
 
 
-	public LocalDateTime getIntroduced() {
+	public LocalDate getIntroduced() {
 		return introduced;
 	}
 
-	public void setIntroduced(LocalDateTime introduced) {
+	public void setIntroduced(LocalDate introduced) {
 		this.introduced = introduced;
 	}
 
-	public LocalDateTime getDiscontinued() {
+	public LocalDate getDiscontinued() {
 		return discontinued;
 	}
 
-	public void setDiscontinued(LocalDateTime discontinued) {
+	public void setDiscontinued(LocalDate discontinued) {
 		this.discontinued = discontinued;
 	}
 

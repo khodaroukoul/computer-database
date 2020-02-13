@@ -1,5 +1,6 @@
 package fr.excilys.formation.cli.UI;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -119,17 +120,17 @@ public class CliUI {
 				String computerName = scanner.next();
 				computer.setName(computerName);
 				System.out.println("Please enter computer introduced date (yyyy-MM-dd) or null for nothing:");
-				String computerIntro = scanner.next() + " 00:00";
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-				computer.setIntroduced(computerIntro.equals("null")?null:LocalDateTime.parse(computerIntro,formatter));
-				System.out.println("Please enter computer discontinued date (yyyy-MM-dd HH:mm) or null for nothing:");
+				String computerIntro = scanner.next();
+				//DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
+				computer.setIntroduced(computerIntro.equals("null")?null:LocalDate.parse(computerIntro));
+				System.out.println("Please enter computer discontinued date (yyyy-MM-dd) or null for nothing:");
 				String computerDisc = scanner.next();
-				computer.setDiscontinued(computerDisc.equals("null")?null:LocalDateTime.parse(computerDisc));
+				computer.setDiscontinued(computerDisc.equals("null")?null:LocalDate.parse(computerDisc));
 				System.out.println("Please enter company id");
 				int companyId = scanner.nextInt();
 				computer.setCompany(new Company(companyId));
 				ComputerDAO.getInstance().create(computer);
-				ComputerDAO.getInstance().delete(computerId);
+				ComputerDAO.getInstance().find(computerId);
 				System.out.println(computer.toString() + " is created");
 				System.out.println("Press enter to continue");
 				try {
@@ -156,7 +157,7 @@ public class CliUI {
 				if(scanner.nextInt()==2) {
 					System.out.println("Please enter computer introduced date (yyyy-mm-dd) or null for nothing:");
 					computerIntro = scanner.next();
-					computer.setIntroduced(computerIntro.equals("null")?null:LocalDateTime.parse(computerIntro));
+					computer.setIntroduced(computerIntro.equals("null")?null:LocalDate.parse(computerIntro));
 				}
 				
 
@@ -164,7 +165,7 @@ public class CliUI {
 				if(scanner.nextInt()==3) {
 					System.out.println("Please enter computer introduced date (yyyy-mm-dd) or null for nothing:");
 					computerDisc = scanner.next();
-					computer.setDiscontinued(computerDisc.equals("null")?null:LocalDateTime.parse(computerDisc));
+					computer.setDiscontinued(computerDisc.equals("null")?null:LocalDate.parse(computerDisc));
 				}
 				
 

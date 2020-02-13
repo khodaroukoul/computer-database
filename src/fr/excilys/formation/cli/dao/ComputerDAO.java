@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +47,8 @@ public Computer create(Computer obj) {
 
 		prepare.setInt(1, obj.getId());
 		prepare.setString(2, obj.getName());
-		prepare.setTimestamp(3, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced()):null );
-		prepare.setTimestamp(4, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued()):null );
+		prepare.setTimestamp(3, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced().atTime(LocalTime.MIDNIGHT)):null );
+		prepare.setTimestamp(4, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued().atTime(LocalTime.MIDNIGHT)):null );
 		prepare.setInt(5,obj.getCompany().getId());
 		prepare.executeUpdate();
 			
@@ -83,8 +84,8 @@ try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
 		) {
 	
 	prepare.setString(1, obj.getName());
-	prepare.setTimestamp(2, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced()):null );
-	prepare.setTimestamp(3, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued()):null );
+	prepare.setTimestamp(2, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced().atTime(LocalTime.MIDNIGHT)):null );
+	prepare.setTimestamp(3, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued().atTime(LocalTime.MIDNIGHT)):null );
 	prepare.setInt(4,obj.getCompany().getId());
 	prepare.setInt(5, obj.getId());
 	prepare.executeUpdate();
@@ -113,8 +114,8 @@ public Computer find(int id) {
 		 computer = new Computer(
 					 rst.getInt("id"), 
 					 rst.getString("name"),
-					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime():null,
-					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime():null,
+					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null,
+					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null,
 							 company);
 
 	} catch (SQLException e) {
@@ -137,8 +138,8 @@ public List<Computer> getList() {
 			 computer = new Computer(
 					 rst.getInt("id"), 
 					 rst.getString("name"),
-					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime():null,
-					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime():null,
+					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null,
+					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null,
 					 company);
 			 
 			 computers.add(computer);
@@ -164,8 +165,8 @@ public List<Computer> getListPerPage(int noPage, int nbLine) {
 			 computer = new Computer(
 					 rst.getInt("id"), 
 					 rst.getString("name"),
-					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime():null,
-					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime():null,
+					 rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null,
+					 rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null,
 					 company);
 			 
 			 computers.add(computer);
