@@ -1,8 +1,6 @@
 package fr.excilys.formation.cli.UI;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -206,6 +204,6 @@ public class CliUI {
 				break;
 			}
 		}
-
+       scanner.close();
 	}
 }
