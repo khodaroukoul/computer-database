@@ -169,14 +169,9 @@ public class ComputerDAO {
 				computer.setId(rst.getInt("id"));
 				computers.add(computer);
 			}
+			rst.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
-			try {
-				rst.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 		return computers;
 	}
