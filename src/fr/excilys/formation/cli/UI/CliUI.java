@@ -14,10 +14,11 @@ public class CliUI {
 	public static void main(String[] args) {
 		int cli = 0;
 		boolean stayCli = true;
-		Computer computer = new Computer();
+		Computer computer = null;
+		Company company = null;
 
-        Scanner scanner = new Scanner(System. in);
-        
+		Scanner scanner = new Scanner(System. in);
+
 		while(stayCli) {
 			System.out.println("Please choose your choice");
 			System.out.println("///////////////////////////");
@@ -42,10 +43,8 @@ public class CliUI {
 			switch(cli) {
 
 			case 1:
-
-				// Displaying company Data
-				List<Company> company = CompanyDAO.getInstance().getList();
-				for(Company co : company) {
+				List<Company> companies = CompanyDAO.getInstance().getList();
+				for(Company co : companies) {
 					System.out.println(co.toString());			
 				}
 
@@ -60,8 +59,6 @@ public class CliUI {
 				break;
 
 			case 2:
-
-				// Displaying computer Data
 				List<Computer> computers = ComputerDAO.getInstance().getList();
 				for(Computer cp : computers) {
 					System.out.println(cp.toString());			
@@ -82,7 +79,7 @@ public class CliUI {
 				int pageNb = scanner.nextInt();
 				System.out.println("Please select number of computers to show:");
 				int lineNb = scanner.nextInt();
-				// Displaying 10 computer Data in page 2
+				// Displaying lineNb computers in page pageNb
 				List<Computer> computersPerPage = ComputerDAO.getInstance().getListPerPage(pageNb,lineNb);
 				for(Computer cp : computersPerPage) {
 					System.out.println(cp.toString());
@@ -111,24 +108,21 @@ public class CliUI {
 				break;
 			case 5:
 				System.out.println("Please enter the following info to create a computer:");
-				System.out.println("Please enter computer id:");
-				computerId = scanner.nextInt();
-				computer.setId(computerId);
 				System.out.println("Please enter computer name:");
 				String computerName = scanner.next();
-				computer.setName(computerName);
+				computer = new Computer.ComputerBuilder(computerName).build();
 				System.out.println("Please enter computer introduced date (yyyy-MM-dd) or null for nothing:");
 				String computerIntro = scanner.next();
-				//DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH");
 				computer.setIntroduced(computerIntro.equals("null")?null:LocalDate.parse(computerIntro));
 				System.out.println("Please enter computer discontinued date (yyyy-MM-dd) or null for nothing:");
 				String computerDisc = scanner.next();
 				computer.setDiscontinued(computerDisc.equals("null")?null:LocalDate.parse(computerDisc));
 				System.out.println("Please enter company id");
 				int companyId = scanner.nextInt();
-				computer.setCompany(new Company(companyId));
+				company = new Company.CompanyBuilder().setId(companyId).build();
+				computer.setCompany(company);
 				ComputerDAO.getInstance().create(computer);
-				ComputerDAO.getInstance().find(computerId);
+				computer = ComputerDAO.getInstance().find(computer.getId());
 				System.out.println(computer.toString() + " is created");
 				System.out.println("Press enter to continue");
 				try {
@@ -140,42 +134,41 @@ public class CliUI {
 			case 6:
 				System.out.println("Please enter computer id to update:");
 				computerId = scanner.nextInt();
-				computer.setId(computerId);
 				System.out.println("Computer you want to update is:");
 				computer = ComputerDAO.getInstance().find(computerId);
 				System.out.println(computer.toString());
+
 				System.out.println("To change the computer name press 1 or 0 to skip");
 				if(scanner.nextInt()==1) {
-				System.out.println("Please enter computer name to update:");
-				computerName = scanner.next();
-				computer.setName(computerName);
+					System.out.println("Please enter computer name to update:");
+					computerName = scanner.next();
+					computer.setName(computerName);
 				}
-				
+
 				System.out.println("To change the computer introduced date press 2 or 0 to skip");
 				if(scanner.nextInt()==2) {
-					System.out.println("Please enter computer introduced date (yyyy-mm-dd) or null for nothing:");
+					System.out.println("Please enter the computer introduced date (yyyy-mm-dd) or null for nothing:");
 					computerIntro = scanner.next();
 					computer.setIntroduced(computerIntro.equals("null")?null:LocalDate.parse(computerIntro));
 				}
-				
+
 
 				System.out.println("To change the computer discontinued date press 3 or 0 to skip");
 				if(scanner.nextInt()==3) {
-					System.out.println("Please enter computer introduced date (yyyy-mm-dd) or null for nothing:");
+					System.out.println("Please enter the computer introduced date (yyyy-mm-dd) or null for nothing:");
 					computerDisc = scanner.next();
 					computer.setDiscontinued(computerDisc.equals("null")?null:LocalDate.parse(computerDisc));
 				}
-				
 
-				
 				System.out.println("To change the company id press 4 or 0 to skip");
 				if(scanner.nextInt()==4) {
-					System.out.println("Please enter company id:");
+					System.out.println("Please enter the company id:");
 					companyId = scanner.nextInt();
-					computer.setCompany(new Company(companyId));
-				}
-				
+					computer.setCompany(new Company.CompanyBuilder().setId(companyId).build());
+				}						
+
 				ComputerDAO.getInstance().update(computer);
+				computer = ComputerDAO.getInstance().find(computerId);
 				System.out.println(computer.toString());
 				System.out.println("Press enter to continue");
 				try {
@@ -204,6 +197,6 @@ public class CliUI {
 				break;
 			}
 		}
-       scanner.close();
+		scanner.close();
 	}
 }

@@ -11,12 +11,11 @@ import fr.excilys.formation.cli.beans.Company;
 import fr.excilys.formation.cli.jdbc.ConnectionMySQL;
 
 public final class CompanyDAO{
-	//list is working as a database
+
 	List<Company> companies = new ArrayList<Company>();
 
 	private static volatile CompanyDAO instance = null;
 	private CompanyDAO() {
-		super();
 	}
 
 	public final static CompanyDAO getInstance() {
@@ -36,10 +35,10 @@ public final class CompanyDAO{
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
 				ResultSet rst = connect.createStatement(
 						ResultSet.TYPE_SCROLL_INSENSITIVE,
-						ResultSet.CONCUR_UPDATABLE).executeQuery("Select * From company");
+						ResultSet.CONCUR_UPDATABLE).executeQuery("SELECT id, name FROM company");
 				) {
 			while (rst.next()) {
-				Company company = new Company(rst.getInt("id"),rst.getString("name"));
+				Company company = new Company.CompanyBuilder().setId(rst.getInt("id")).setName(rst.getString("name")).build();
 				companies.add(company);
 			}
 
@@ -53,19 +52,16 @@ public final class CompanyDAO{
 	public List<Company> getListPerPage(int noPage, int nbLine) {
 		ResultSet rst = null;
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement("Select * From company limit ?, ?");
+				PreparedStatement prepare = connect.prepareStatement("SELECT id, name FROM company LIMIT ?, ?");
 				) {
 
 			prepare.setInt(1, (noPage-1)*nbLine);
 			prepare.setInt(2, nbLine);
 			rst = prepare.executeQuery();
 			while (rst.next()) {
-				Company company = new Company(
-						rst.getInt("id"), 
-						rst.getString("name"));
-
+				Company company = new Company.CompanyBuilder().setId(rst.getInt("id")).setName(rst.getString("name")).build();
 				companies.add(company);
-			}
+				}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {

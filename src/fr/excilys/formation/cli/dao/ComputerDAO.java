@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import fr.excilys.formation.cli.beans.Computer;
 import fr.excilys.formation.cli.jdbc.ConnectionMySQL;
 
 public class ComputerDAO {
-	//list is working as a database
 	List<Computer> computers = new ArrayList<Computer>();
 	Computer computer;
 	Company company;
@@ -38,21 +38,26 @@ public class ComputerDAO {
 	public Computer create(Computer obj) {
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
 				PreparedStatement prepare = connect.prepareStatement(
-						"INSERT INTO computer (id, name, introduced, discontinued, company_id)"+
-						"VALUES(?, ?, ?, ?, ?)");
+						"INSERT INTO computer (name, introduced, discontinued, company_id)"+
+						"VALUES( ?, ?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
 				) {
 
 
-			prepare.setInt(1, obj.getId());
-			prepare.setString(2, obj.getName());
-			prepare.setTimestamp(3, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced().atTime(LocalTime.MIDNIGHT)):null );
-			prepare.setTimestamp(4, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued().atTime(LocalTime.MIDNIGHT)):null );
-			prepare.setInt(5,obj.getCompany().getId());
+			prepare.setString(1, obj.getName());
+			prepare.setTimestamp(2, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced().atTime(LocalTime.MIDNIGHT)):null );
+			prepare.setTimestamp(3, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued().atTime(LocalTime.MIDNIGHT)):null );
+			prepare.setInt(4,obj.getCompany().getId());
 			prepare.executeUpdate();
+			ResultSet rst = prepare.getGeneratedKeys();
+			rst.first();
+			int auto_id = rst.getInt(1);
+			obj.setId(auto_id);
+			rst.close();
 
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
 
 		return obj;
 	}
@@ -81,7 +86,7 @@ public class ComputerDAO {
 			prepare.setString(1, obj.getName());
 			prepare.setTimestamp(2, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced().atTime(LocalTime.MIDNIGHT)):null );
 			prepare.setTimestamp(3, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued().atTime(LocalTime.MIDNIGHT)):null );
-			prepare.setInt(4,obj.getCompany().getId());
+			prepare.setInt(4, obj.getCompany().getId());
 			prepare.setInt(5, obj.getId());
 			prepare.executeUpdate();
 
@@ -97,19 +102,18 @@ public class ComputerDAO {
 				ResultSet rst = connect.createStatement(
 						ResultSet.TYPE_SCROLL_INSENSITIVE, 
 						ResultSet.CONCUR_UPDATABLE).
-						executeQuery("Select cp.id, cp.name, cp.introduced, cp.discontinued, co.id as coId, co.name as coName"
-								+ " from computer as cp left join company as co on cp.company_id = co.id"
+						executeQuery("SELECT cp.id, cp.name, cp.introduced, cp.discontinued, co.id as coId, co.name AS coName"
+								+ " FROM computer AS cp LEFT JOIN company AS co ON cp.company_id = co.id"
 								+ " where cp.id="+id);
 				) {
 
 			rst.first();
-			company = new Company(rst.getInt("coId"),rst.getString("coName"));
-			computer = new Computer(
-					rst.getInt("id"), 
-					rst.getString("name"),
-					rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null,
-							rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null,
-									company);
+			company = new Company.CompanyBuilder().setId(rst.getInt("coId")).setName(rst.getString("coName")).build();			
+			computer = new Computer.ComputerBuilder(rst.getString("name"))
+					.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null)
+					.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null)
+					.setCompany(company).build();
+			computer.setId(rst.getInt("id"));
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -120,19 +124,18 @@ public class ComputerDAO {
 	public List<Computer> getList() {
 
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement("Select * From computer");
+				PreparedStatement prepare = connect.prepareStatement("SELECT cp.id, cp.name, cp.introduced, cp.discontinued, co.name AS coName"
+						+ " FROM computer AS cp LEFT JOIN company AS co ON company_id=co.id");
 				ResultSet rst = prepare.executeQuery();
 				) {
 
 			while (rst.next()) {
-				company = new Company(rst.getInt("company_id"));
-				computer = new Computer(
-						rst.getInt("id"), 
-						rst.getString("name"),
-						rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null,
-								rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null,
-										company);
-
+				company = new Company.CompanyBuilder().setName(rst.getString("coName")).build();
+				computer = new Computer.ComputerBuilder(rst.getString("name"))
+						.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null)
+						.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null)
+						.setCompany(company).build();
+				computer.setId(rst.getInt("id"));
 				computers.add(computer);
 			}
 		} catch (SQLException e) {
@@ -144,21 +147,20 @@ public class ComputerDAO {
 	public List<Computer> getListPerPage(int noPage, int nbLine) {
 		ResultSet rst = null;
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement("Select * From computer limit ?, ?");
+				PreparedStatement prepare = connect.prepareStatement("SELECT cp.id, cp.name, cp.introduced, cp.discontinued, co.name AS coName "
+						+ "FROM computer AS cp LEFT JOIN company AS co ON company_id=co.id LIMIT ?, ?");
 				) {
 
 			prepare.setInt(1, (noPage-1)*nbLine);
 			prepare.setInt(2, nbLine);
 			rst = prepare.executeQuery();
 			while (rst.next()) {
-				company = new Company(rst.getInt("company_id"));
-				computer = new Computer(
-						rst.getInt("id"), 
-						rst.getString("name"),
-						rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null,
-								rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null,
-										company);
-
+				company = new Company.CompanyBuilder().setName(rst.getString("coName")).build();			
+				computer = new Computer.ComputerBuilder(rst.getString("name"))
+						.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null)
+						.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null)
+						.setCompany(company).build();
+				computer.setId(rst.getInt("id"));
 				computers.add(computer);
 			}
 		} catch (SQLException e) {
