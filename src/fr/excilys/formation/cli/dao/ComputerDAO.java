@@ -15,6 +15,22 @@ import fr.excilys.formation.cli.beans.Computer;
 import fr.excilys.formation.cli.jdbc.ConnectionMySQL;
 
 public class ComputerDAO {
+	private static final String FIND_ALL_COMPUTERS = "SELECT cp.id, cp.name, cp.introduced,"
+			+ " cp.discontinued, co.id as coId, co.name AS coName"
+			+ " FROM computer AS cp LEFT JOIN company AS co"
+			+ " ON company_id = co.id";
+	private static final String FIND_ONE_COMPUTER = "SELECT cp.id, cp.name, cp.introduced,"
+			+ " cp.discontinued, co.id as coId, co.name AS coName"
+			+ " FROM computer AS cp LEFT JOIN company AS co"
+			+ " ON cp.company_id = co.id where cp.id =";
+	private static final String NEW_COMPUTER = "INSERT INTO computer"
+			+ " (name, introduced, discontinued, company_id)"
+			+ " VALUES( ?, ?, ?, ?)";
+	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id = ?";
+	private static final String UPDATE_COMPUTER = "UPDATE computer SET name = ?, introduced = ?,"
+			+ "discontinued = ?, company_id = ? WHERE id = ?";
+	private static final String FIND_PAGE = " LIMIT ?, ?";
+			
 	List<Computer> computers = new ArrayList<Computer>();
 	Computer computer;
 	Company company;
@@ -37,17 +53,14 @@ public class ComputerDAO {
 
 	public Computer create(Computer obj) {
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement(
-						"INSERT INTO computer (name, introduced, discontinued, company_id)"+
-						"VALUES( ?, ?, ?, ?)",Statement.RETURN_GENERATED_KEYS);
+				PreparedStatement prepare = connect.prepareStatement(NEW_COMPUTER,Statement.RETURN_GENERATED_KEYS);
 				) {
-
-
 			prepare.setString(1, obj.getName());
 			prepare.setTimestamp(2, obj.getIntroduced()!=null?Timestamp.valueOf(obj.getIntroduced().atTime(LocalTime.MIDNIGHT)):null );
 			prepare.setTimestamp(3, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued().atTime(LocalTime.MIDNIGHT)):null );
 			prepare.setInt(4,obj.getCompany().getId());
 			prepare.executeUpdate();
+			
 			ResultSet rst = prepare.getGeneratedKeys();
 			rst.first();
 			int auto_id = rst.getInt(1);
@@ -64,7 +77,7 @@ public class ComputerDAO {
 
 	public boolean delete(int id) {
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement("DELETE FROM computer WHERE id = ?");
+				PreparedStatement prepare = connect.prepareStatement(DELETE_COMPUTER);
 				) {		
 			prepare.setInt(1, id);
 			prepare.executeUpdate();
@@ -79,8 +92,7 @@ public class ComputerDAO {
 
 	public Computer update(Computer obj) {
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement("UPDATE computer SET name = ?, introduced = ?,"
-						+ "discontinued = ?, company_id = ? WHERE id = ?");
+				PreparedStatement prepare = connect.prepareStatement(UPDATE_COMPUTER);
 				) {
 
 			prepare.setString(1, obj.getName());
@@ -99,12 +111,8 @@ public class ComputerDAO {
 
 	public Computer find(int id) {
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				ResultSet rst = connect.createStatement(
-						ResultSet.TYPE_SCROLL_INSENSITIVE, 
-						ResultSet.CONCUR_UPDATABLE).
-						executeQuery("SELECT cp.id, cp.name, cp.introduced, cp.discontinued, co.id as coId, co.name AS coName"
-								+ " FROM computer AS cp LEFT JOIN company AS co ON cp.company_id = co.id"
-								+ " where cp.id="+id);
+				PreparedStatement prepare = connect.prepareStatement(FIND_ONE_COMPUTER + id);
+				ResultSet rst = prepare.executeQuery();
 				) {
 
 			rst.first();
@@ -124,8 +132,7 @@ public class ComputerDAO {
 	public List<Computer> getList() {
 
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement("SELECT cp.id, cp.name, cp.introduced, cp.discontinued, co.name AS coName"
-						+ " FROM computer AS cp LEFT JOIN company AS co ON company_id=co.id");
+				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS);
 				ResultSet rst = prepare.executeQuery();
 				) {
 
@@ -147,8 +154,7 @@ public class ComputerDAO {
 	public List<Computer> getListPerPage(int noPage, int nbLine) {
 		ResultSet rst = null;
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
-				PreparedStatement prepare = connect.prepareStatement("SELECT cp.id, cp.name, cp.introduced, cp.discontinued, co.name AS coName "
-						+ "FROM computer AS cp LEFT JOIN company AS co ON company_id=co.id LIMIT ?, ?");
+				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS+FIND_PAGE);
 				) {
 
 			prepare.setInt(1, (noPage-1)*nbLine);
