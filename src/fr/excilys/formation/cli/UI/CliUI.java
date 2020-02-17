@@ -11,6 +11,26 @@ import fr.excilys.formation.cli.dao.ComputerDAO;
 
 public class CliUI {
 
+	public enum CLI {
+		COMPANY_LIST(1),
+		COMPUTER_LIST(2),
+		COMPUTER_LIST_PER_PAGE(3),
+		SHOW_COMPUTER(4),
+		CREATE_COMPUTER(5),
+		UPDATE_COMPUTER(6),
+		DELETE_COMPUTER(7),
+		EXIT_CLI(8);
+		
+		private int cliChoice;
+
+		CLI(int cliChoice) {
+			this.cliChoice = cliChoice;
+		}
+	 
+	    public int getCliChoice() {
+	        return cliChoice;
+	    }
+	}
 	public static void main(String[] args) {
 		int cli = 0;
 		boolean stayCli = true;
@@ -40,9 +60,9 @@ public class CliUI {
 			System.out.println("///////////////////////////");
 			cli = scanner.nextInt();
 
-			switch(cli) {
+			switch(CLI.values()[cli-1]) {
 
-			case 1:
+			case COMPANY_LIST:
 				List<Company> companies = CompanyDAO.getInstance().getList();
 				for(Company co : companies) {
 					System.out.println(co.toString());			
@@ -58,7 +78,7 @@ public class CliUI {
 				}
 				break;
 
-			case 2:
+			case COMPUTER_LIST:
 				List<Computer> computers = ComputerDAO.getInstance().getList();
 				for(Computer cp : computers) {
 					System.out.println(cp.toString());			
@@ -74,7 +94,7 @@ public class CliUI {
 				}
 				break;
 
-			case 3:
+			case COMPUTER_LIST_PER_PAGE:
 				System.out.println("Please select page number:");
 				int pageNb = scanner.nextInt();
 				System.out.println("Please select number of computers to show:");
@@ -94,7 +114,7 @@ public class CliUI {
 				}
 				break;
 
-			case 4:
+			case SHOW_COMPUTER:
 				System.out.println("Please select computer id to display:");
 				int computerId = scanner.nextInt();
 				computer = ComputerDAO.getInstance().find(computerId);
@@ -106,7 +126,7 @@ public class CliUI {
 					e.printStackTrace();
 				}
 				break;
-			case 5:
+			case CREATE_COMPUTER:
 				System.out.println("Please enter the following info to create a computer:");
 				System.out.println("Please enter computer name:");
 				String computerName = scanner.next();
@@ -131,7 +151,7 @@ public class CliUI {
 					e.printStackTrace();
 				}
 				break;
-			case 6:
+			case UPDATE_COMPUTER:
 				System.out.println("Please enter computer id to update:");
 				computerId = scanner.nextInt();
 				System.out.println("Computer you want to update is:");
@@ -177,7 +197,7 @@ public class CliUI {
 					e.printStackTrace();
 				}
 				break;
-			case 7:
+			case DELETE_COMPUTER:
 				System.out.println("Please enter computer id to delete:");
 				computerId = scanner.nextInt();
 				computer = ComputerDAO.getInstance().find(computerId);
@@ -190,7 +210,7 @@ public class CliUI {
 					e.printStackTrace();
 				}
 				break;
-			case 8:
+			case EXIT_CLI:
 				System.out.println("End of CLI");
 				stayCli = false;
 			default:
