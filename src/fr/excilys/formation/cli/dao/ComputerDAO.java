@@ -9,31 +9,32 @@ import java.sql.Timestamp;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import fr.excilys.formation.cli.beans.Company;
 import fr.excilys.formation.cli.beans.Computer;
 import fr.excilys.formation.cli.jdbc.ConnectionMySQL;
+import fr.excilys.formation.cli.mapper.ComputerMapper;
 
-public class ComputerDAO {
+public final class ComputerDAO {
 	private static final String FIND_ALL_COMPUTERS = "SELECT cp.id, cp.name, cp.introduced,"
 			+ " cp.discontinued, co.id as coId, co.name AS coName"
 			+ " FROM computer AS cp LEFT JOIN company AS co"
-			+ " ON company_id = co.id";
+			+ " ON cp.company_id = co.id";
 	private static final String FIND_ONE_COMPUTER = "SELECT cp.id, cp.name, cp.introduced,"
 			+ " cp.discontinued, co.id as coId, co.name AS coName"
 			+ " FROM computer AS cp LEFT JOIN company AS co"
 			+ " ON cp.company_id = co.id where cp.id =";
 	private static final String NEW_COMPUTER = "INSERT INTO computer"
-			+ " (name, introduced, discontinued, company_id)"
-			+ " VALUES( ?, ?, ?, ?)";
+			+ " (id, name, introduced, discontinued, company_id)"
+			+ " SELECT MAX(id)+1, ?, ?, ?, ? FROM computer";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id = ?";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name = ?, introduced = ?,"
 			+ "discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String FIND_PAGE = " LIMIT ?, ?";
-			
-	List<Computer> computers = new ArrayList<Computer>();
-	Computer computer;
+
 	Company company;
+	Computer computer;
 
 	private static volatile ComputerDAO instance = null;
 	private ComputerDAO() {
@@ -60,7 +61,7 @@ public class ComputerDAO {
 			prepare.setTimestamp(3, obj.getDiscontinued()!=null?Timestamp.valueOf(obj.getDiscontinued().atTime(LocalTime.MIDNIGHT)):null );
 			prepare.setInt(4,obj.getCompany().getId());
 			prepare.executeUpdate();
-			
+
 			ResultSet rst = prepare.getGeneratedKeys();
 			rst.first();
 			int auto_id = rst.getInt(1);
@@ -70,7 +71,6 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
 
 		return obj;
 	}
@@ -78,7 +78,7 @@ public class ComputerDAO {
 	public boolean delete(int id) {
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
 				PreparedStatement prepare = connect.prepareStatement(DELETE_COMPUTER);
-				) {		
+				) {
 			prepare.setInt(1, id);
 			prepare.executeUpdate();
 
@@ -109,19 +109,15 @@ public class ComputerDAO {
 		return obj;
 	}
 
-	public Computer find(int id) {
+	public Optional<Computer> find(int id) {
+		Optional<Computer> computer =  Optional.empty();
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ONE_COMPUTER + id);
 				ResultSet rst = prepare.executeQuery();
 				) {
-
-			rst.first();
-			company = new Company.CompanyBuilder().setId(rst.getInt("coId")).setName(rst.getString("coName")).build();			
-			computer = new Computer.ComputerBuilder(rst.getString("name"))
-					.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null)
-					.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null)
-					.setCompany(company).build();
-			computer.setId(rst.getInt("id"));
+			if(rst.first()) {
+				computer = ComputerMapper.getInstance().getComputer(rst);	
+			}
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -129,29 +125,25 @@ public class ComputerDAO {
 		return computer;
 	}
 
-	public List<Computer> getList() {
-
+	public Optional<List<Computer>> getList() {
+		List<Computer> computers = new ArrayList<Computer>();
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS);
 				ResultSet rst = prepare.executeQuery();
 				) {
 
 			while (rst.next()) {
-				company = new Company.CompanyBuilder().setName(rst.getString("coName")).build();
-				computer = new Computer.ComputerBuilder(rst.getString("name"))
-						.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null)
-						.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null)
-						.setCompany(company).build();
-				computer.setId(rst.getInt("id"));
+				computer = ComputerMapper.getInstance().getComputer(rst).get();
 				computers.add(computer);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return computers;
+		return Optional.ofNullable(computers);
 	}
 
-	public List<Computer> getListPerPage(int noPage, int nbLine) {
+	public Optional<List<Computer>> getListPerPage(int noPage, int nbLine) {
+		List<Computer> computers = new ArrayList<Computer>();
 		ResultSet rst = null;
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS+FIND_PAGE);
@@ -161,19 +153,19 @@ public class ComputerDAO {
 			prepare.setInt(2, nbLine);
 			rst = prepare.executeQuery();
 			while (rst.next()) {
-				company = new Company.CompanyBuilder().setName(rst.getString("coName")).build();			
-				computer = new Computer.ComputerBuilder(rst.getString("name"))
-						.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null)
-						.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null)
-						.setCompany(company).build();
-				computer.setId(rst.getInt("id"));
+				computer = ComputerMapper.getInstance().getComputer(rst).get();
 				computers.add(computer);
 			}
-			rst.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				rst.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
-		return computers;
+		return Optional.ofNullable(computers);
 	}
 
 }

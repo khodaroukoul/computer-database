@@ -15,9 +15,9 @@ public class Computer {
 		this.discontinued = builder.discontinued;
 		this.company = builder.company;
 	}
-	
-	
-	
+
+
+
 	public int getId() {
 		return id;
 	}

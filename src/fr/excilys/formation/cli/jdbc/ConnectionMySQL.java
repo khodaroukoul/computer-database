@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConnectionMySQL {
+public final class ConnectionMySQL {
 	String driverClassName = "com.mysql.cj.jdbc.Driver";
 	String connectionUrl = "jdbc:mysql://localhost:3306/computer-database-db";
 	String dbUser = "admincdb";

@@ -8,7 +8,7 @@ public class Company {
 		this.id = builder.id;
 		this.name = builder.name;
 	}
-	
+
 
 
 	public int getId() {
@@ -39,6 +39,7 @@ public class Company {
 	public String toString() {
 		return "Company [id=" + id + ", name=" + name + "]";
 	}
+
 
 	public static class CompanyBuilder {
 		private int id;
