@@ -63,7 +63,7 @@ public class CliUI {
 				break;
 
 			case COMPUTER_LIST_PER_PAGE:
-				CliAction.showComputerPerPage(scanner);
+				CliAction.showComputersPerPage(scanner);
 				break;
 
 			case SHOW_COMPUTER:

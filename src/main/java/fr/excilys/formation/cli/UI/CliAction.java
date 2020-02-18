@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.excilys.formation.cli.beans.Company;
 import fr.excilys.formation.cli.beans.Computer;
@@ -11,6 +13,16 @@ import fr.excilys.formation.cli.dao.CompanyDAO;
 import fr.excilys.formation.cli.dao.ComputerDAO;
 
 public class CliAction {
+	private static Logger logger = LoggerFactory.getLogger(CliAction.class);
+	
+	private static final String SHOW_COMPANIES = "ERROR IN SHOW COMPANIES";
+	private static final String SHOW_COMPUTERS = "ERROR IN SHOW COMPUTERS";
+	private static final String SHOW_COMPUTERS_PER_PAGE = "ERROR IN SHOW COMPUTERS PER PAGE";
+	private static final String SHOW_COMPUTER = "ERROR IN FIND A COMPUTER";
+	private static final String CREATE_COMPUTER = "ERROR IN CREATE A COMPUTER";
+	private static final String UPDATE_COMPUTER = "ERROR IN UPDATE A COMPUTER";
+	private static final String DELETE_COMPUTER = "ERROR IN DELETE A COMPUTER";
+	private static final String COMPUTER_NOT_FOUND = "Computer is not found";
 
 	public static void showCompanies(Scanner scanner) {
 		List<Company> companies = CompanyDAO.getInstance().getList();
@@ -22,7 +34,7 @@ public class CliAction {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(SHOW_COMPANIES);
 		}
 
 	}
@@ -37,11 +49,11 @@ public class CliAction {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(SHOW_COMPUTERS);
 		}
 	}
 
-	public static void showComputerPerPage(Scanner scanner) {
+	public static void showComputersPerPage(Scanner scanner) {
 		System.out.println("Please select page number:");
 		int pageNb = scanner.nextInt();
 		System.out.println("Please select number of computers to show:");
@@ -55,7 +67,7 @@ public class CliAction {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(SHOW_COMPUTERS_PER_PAGE);
 		}
 	}
 
@@ -66,13 +78,13 @@ public class CliAction {
 			Computer computer = ComputerDAO.getInstance().find(computerId).get();
 			System.out.println(computer.toString());
 		} else {
-			System.out.println("Computer is not found");
+			logger.info(COMPUTER_NOT_FOUND);
 		}
 		System.out.println("Press enter to continue");
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(SHOW_COMPUTER);
 		}		
 	}
 
@@ -98,7 +110,7 @@ public class CliAction {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(CREATE_COMPUTER);
 		}		
 	}
 
@@ -144,13 +156,13 @@ public class CliAction {
 			System.out.println(computer.toString());
 
 		} else {
-			System.out.println("Computer is not found");
+			logger.info(COMPUTER_NOT_FOUND);
 		}
 		System.out.println("Press enter to continue");
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(UPDATE_COMPUTER);
 		}
 	}
 
@@ -168,7 +180,7 @@ public class CliAction {
 		try {
 			System.in.read();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error(DELETE_COMPUTER);
 		}
 	}
 }
