@@ -67,7 +67,7 @@ public class CliUI {
 				break;
 
 			case SHOW_COMPUTER:
-				CliAction.showComputer(scanner);
+				CliAction.findComputer(scanner);
 				break;
 			case CREATE_COMPUTER:
 				CliAction.createComputer(scanner);

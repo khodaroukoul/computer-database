@@ -11,6 +11,7 @@ public class ComputerMapper {
 	private Company company;
 	private Computer computer;
 	private static volatile ComputerMapper instance = null;
+	
 	private ComputerMapper() {
 		super();
 	}

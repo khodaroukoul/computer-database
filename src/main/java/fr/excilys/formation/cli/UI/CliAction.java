@@ -52,7 +52,7 @@ public class CliAction {
 			logger.error(SHOW_COMPUTERS);
 		}
 	}
-
+	
 	public static void showComputersPerPage(Scanner scanner) {
 		System.out.println("Please select page number:");
 		int pageNb = scanner.nextInt();
@@ -71,7 +71,7 @@ public class CliAction {
 		}
 	}
 
-	public static void showComputer(Scanner scanner) {
+	public static void findComputer(Scanner scanner) {
 		System.out.println("Please select computer id to display:");
 		int computerId = scanner.nextInt();
 		if(ComputerDAO.getInstance().find(computerId).isPresent()) {

@@ -9,28 +9,29 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionMySQL{
-	private static Logger logger = LoggerFactory.getLogger(ConnectionMySQL.class);
+public class ConnectionH2 {
+
+	private static Logger logger = LoggerFactory.getLogger(ConnectionH2.class);
 	private static final String SQL_EXCEPTION = "SQL EXCEPTION ERROR IN ";
 	private static final String IO_EXCEPTION = "IO EXCEPTION ERROR IN ";
 	private static final String CLASS_NOT_FOUND = "CLASS_NOT_FOUND EXCEPTION ERROR IN ";
-	private static final String METHOD_NAME = "getConncetion in class ConnectionMySQL";
+	private static final String METHOD_NAME = "getConncetion in class ConnectionH2";
 
-	private static ConnectionMySQL connection = null;
+	private static ConnectionH2 connection = null;
 	Properties conProp;
 	String driverClassName;
 	String connectionUrl;
 	String dbUser;
 	String dbPwd;
 
-	private ConnectionMySQL() {
+	private ConnectionH2() {
 	}
 
 	public Connection getConnection() {
 		Connection conn = null;
 		try {
 			conProp = new Properties ();
-			conProp.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("connection.properties"));
+			conProp.load(Thread.currentThread().getContextClassLoader().getResourceAsStream("connectionH2.properties"));
 			driverClassName = conProp.getProperty("driverClassName");
 			connectionUrl = conProp.getProperty("connectionUrl");
 			dbUser = conProp.getProperty("dbUser");
@@ -47,9 +48,9 @@ public class ConnectionMySQL{
 		return conn;
 	}
 
-	public static ConnectionMySQL getInstance() {
+	public static ConnectionH2 getInstance() {
 		if (connection == null) {
-			connection = new ConnectionMySQL();
+			connection = new ConnectionH2();
 		}
 		return connection;
 	}

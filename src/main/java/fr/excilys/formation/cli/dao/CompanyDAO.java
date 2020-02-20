@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.excilys.formation.cli.beans.Company;
 import fr.excilys.formation.cli.jdbc.ConnectionMySQL;
 
@@ -14,9 +17,14 @@ public final class CompanyDAO{
 	private static final String FIND_ALL_COMPANIES = "SELECT id, name FROM company";
 	private static final String FIND_PAGE = " LIMIT ?, ?";
 
+	private static Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
+	private static final String SQL_EXCEPTION = "SQL EXCEPTION ERROR IN ";
+	private static final String CLASS_NAME = "in class CompanyDAO";
+
 	List<Company> companies = new ArrayList<Company>();
 
 	private static volatile CompanyDAO instance = null;
+	
 	private CompanyDAO() {
 	}
 
@@ -31,7 +39,6 @@ public final class CompanyDAO{
 		return CompanyDAO.instance;
 	}
 
-
 	public List<Company> getList() {
 
 		try(Connection connect =  ConnectionMySQL.getInstance().getConnection();
@@ -44,7 +51,7 @@ public final class CompanyDAO{
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(SQL_EXCEPTION+"getList in class "+CLASS_NAME);
 		}
 
 		return companies;
@@ -64,12 +71,12 @@ public final class CompanyDAO{
 				companies.add(company);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			logger.error(SQL_EXCEPTION+"getListPerPage in class "+CLASS_NAME);
 		}finally {
 			try {
 				rst.close();
 			} catch (SQLException e) {
-				e.printStackTrace();
+				logger.error(SQL_EXCEPTION+"getListPerPage(finally) in class "+CLASS_NAME);
 			}
 		}
 		return companies;
