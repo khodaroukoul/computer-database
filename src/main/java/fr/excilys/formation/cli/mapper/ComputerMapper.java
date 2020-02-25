@@ -28,7 +28,7 @@ public class ComputerMapper {
 	}
 
 	public Optional<Computer> getComputer(ResultSet rst) throws SQLException {
-		company = new Company.CompanyBuilder().setName(rst.getString("coName")).build();
+		company = new Company.CompanyBuilder().setName(rst.getString("coName")).setId(rst.getInt("coId")).build();
 		computer = new Computer.ComputerBuilder(rst.getString("name"))
 				.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced").toLocalDateTime().toLocalDate():null)
 				.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued").toLocalDateTime().toLocalDate():null)

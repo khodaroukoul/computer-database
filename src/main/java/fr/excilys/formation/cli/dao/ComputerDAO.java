@@ -34,7 +34,7 @@ public final class ComputerDAO {
 			+ " SELECT MAX(id)+1, ?, ?, ?, ? FROM computer";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id = ?";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name = ?, introduced = ?,"
-			+ "discontinued = ?, company_id = ? WHERE id = ?";
+			+ " discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String FIND_PAGE = " LIMIT ?, ?";
 
 	private static Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
@@ -127,7 +127,6 @@ public final class ComputerDAO {
 		} catch (SQLException e) {
 			logger.error(SQL_EXCEPTION + "update in class " + CLASS_NAME);
 		}
-
 		return computer;
 	}
 
