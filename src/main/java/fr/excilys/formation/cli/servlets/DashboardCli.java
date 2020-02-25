@@ -19,21 +19,36 @@ import fr.excilys.formation.cli.dao.ComputerDAO;
 @WebServlet("/dashboardCli")
 public class DashboardCli extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-   
+	private int recordsPerPage = 10;
+	private String nextPage = "/WEB-INF/views/dashboard.jsp";
+	private int page = 1;
+
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	    String nextPage = "/WEB-INF/views/dashboard.jsp";
-        List<Computer> computers = ComputerDAO.getInstance().getList().get();
-	    request.setAttribute("computers", computers);
-	    int page = 1;
-        int recordsPerPage = 10;
-        List<Computer> computersPerpage = ComputerDAO.getInstance().getListPerPage(page,recordsPerPage).get();
-	    request.setAttribute("computersPage", computersPerpage);
-	    RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextPage);
-	    dispatcher.forward(request,response);
+		
+		if(request.getParameter("pageJsp") != null) {
+			page = Integer.parseInt(request.getParameter("pageJsp"));
+		}
+		
+		if(request.getParameter("recordsPerPageJsp") != null) {
+			recordsPerPage = Integer.parseInt(request.getParameter("recordsPerPageJsp"));
+		}
+
+		List<Computer> computers = ComputerDAO.getInstance().getList().get();
+		int noOfRecords = computers.size();
+        int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
+        
+        request.setAttribute("noOfPages", noOfPages);		
+		request.setAttribute("currentPage", page);
+		request.setAttribute("recordsPerPageJsp", recordsPerPage);
+		
+		List<Computer> computersPerpage = ComputerDAO.getInstance().getListPerPage(page,recordsPerPage).get();
+		request.setAttribute("computers", computers);
+		request.setAttribute("computersPage", computersPerpage);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(nextPage);
+		dispatcher.forward(request,response);
 	}
 
 	/**

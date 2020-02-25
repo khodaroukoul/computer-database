@@ -21,8 +21,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboardCli"> Application -
-				Computer Database </a>
+			<a class="navbar-brand" href="dashboardCli?pageJsp=1">
+				Application - Computer Database </a>
 		</div>
 	</header>
 
@@ -53,29 +53,28 @@
 
 		<div class="container" style="margin-top: 10px;">
 			<table class="table table-striped table-bordered">
-					<thead>
-						<tr>
-							<!-- Variable declarations for passing labels as parameters -->
-							<!-- Table header for Computer Name -->
+				<thead>
+					<tr>
+						<!-- Variable declarations for passing labels as parameters -->
+						<!-- Table header for Computer Name -->
 
-							<th class="editMode" style="width: 60px; height: 22px;"><input
-								type="checkbox" id="selectall" /> <span
-								style="vertical-align: top;"> - <a href="#"
-									id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
-										class="fa fa-trash-o fa-lg"></i>
-								</a>
-							</span></th>
-							<th>Computer name</th>
-							<th>Introduced date</th>
-							<!-- Table header for Discontinued Date -->
-							<th>Discontinued date</th>
-							<!-- Table header for Company -->
-							<th>Company</th>
+						<th class="editMode" style="width: 60px; height: 22px;"><input
+							type="checkbox" id="selectall" /> <span
+							style="vertical-align: top;"> - <a href="#"
+								id="deleteSelected" onclick="$.fn.deleteSelected();"> <i
+									class="fa fa-trash-o fa-lg"></i>
+							</a>
+						</span></th>
+						<th>Computer name</th>
+						<th>Introduced date</th>
+						<!-- Table header for Discontinued Date -->
+						<th>Discontinued date</th>
+						<!-- Table header for Company -->
+						<th>Company</th>
 
-						</tr>
-					</thead>
-					<!-- Browse attribute computers -->
-					
+					</tr>
+				</thead>
+				<!-- Browse attribute computers -->
 				<c:forEach items="${computersPage}" var="computer">
 					<tbody id="results">
 						<tr>
@@ -95,24 +94,54 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<li><a href="#" aria-label="Previous"> <span
-						aria-hidden="true">&laquo;</span>
-				</a></li>
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
-				<li><a href="#" aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-				</a></li>
+				<c:if test="${currentPage != 1}">
+					<li><a href="dashboardCli?pageJsp=${currentPage-1}"
+						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+					</a></li>
+				</c:if>
+
+				<%-- current page (1-based) --%>
+				<c:set var="p" value="${currentPage}" />
+
+				<%-- amount of page links to be displayed --%>
+				<c:set var="l" value="5" />
+
+				<%-- minimum link range ahead/behind --%>
+				<c:set var="r" value="${l / 2}" />
+
+				<%-- total amount of pages --%>
+				<c:set var="t" value="${noOfPages}" />
+
+				<c:set var="begin"
+					value="${((p - r) > 0 ? ((p - r) < (t - l + 1) ? (p - r) : (t - l)) : 0) + 1}" />
+
+				<c:set var="end"
+					value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}" />
+
+				<c:forEach begin="${begin}" end="${end}" var="i">
+					<li><a href="dashboardCli?pageJsp=${i}">${i}</a></li>
+				</c:forEach>
+
+				<c:if test="${currentPage lt noOfPages}">
+					<li><a href="dashboardCli?pageJsp=${currentPage+1}"
+						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+					</a></li>
+				</c:if>
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
-				<button type="button" class="btn btn-default">10</button>
-				<button type="button" class="btn btn-default">50</button>
-				<button type="button" class="btn btn-default">100</button>
+				<button type="button" class="btn btn-default"
+					onclick="location.href='dashboardCli?recordsPerPageJsp=10'">
+					10</button>
+				<button type="button" class="btn btn-default"
+					onclick="location.href='dashboardCli?recordsPerPageJsp=50'">
+					50</button>
+				<button type="button" class="btn btn-default"
+					onclick="location.href='dashboardCli?recordsPerPageJsp=100'">
+					100</button>
 			</div>
 	</footer>
+
 	<script src="resources/js/jquery.min.js"></script>
 	<script src="resources/js/bootstrap.min.js"></script>
 	<script src="resources/js/dashboard.js"></script>
