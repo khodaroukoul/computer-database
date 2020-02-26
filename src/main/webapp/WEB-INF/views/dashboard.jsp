@@ -21,13 +21,20 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboardCli?pageJsp=1">
+			<a class="navbar-brand" href="dashboardCli">
 				Application - Computer Database </a>
 		</div>
 	</header>
 
 	<section id="main">
 		<div class="container">
+			<c:if test="${not empty successMsg}">
+				<div class="alert alert-success" role="alert">
+					<i class="fa fa-check fa-2x"></i> &nbsp;&nbsp;&nbsp;&nbsp;<strong>Success:
+					</strong>
+					<c:out value="${successMsg}" />
+				</div>
+			</c:if>
 			<h1 id="homeTitle">${fn:length(computers)} Computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
@@ -40,7 +47,7 @@
 					</form>
 				</div>
 				<div class="pull-right">
-					<a class="btn btn-success" id="addComputer" href="addComputer.jsp">Add
+					<a class="btn btn-success" id="addComputer" href="addComputer">Add
 						Computer</a> <a class="btn btn-default" id="editComputer" href="#"
 						onclick="$.fn.toggleEditMode();">Edit</a>
 				</div>
@@ -71,7 +78,6 @@
 						<th>Discontinued date</th>
 						<!-- Table header for Company -->
 						<th>Company</th>
-
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
