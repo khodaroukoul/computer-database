@@ -1,59 +1,48 @@
-package fr.excilys.formation.cli.beans;
+package fr.excilys.formation.cli.models;
 
 public class Company {
 	private int id;
 	private String name;
 
-	private Company(CompanyBuilder builder) {
+	private Company(Builder builder) {
 		this.id = builder.id;
 		this.name = builder.name;
 	}
-
-
 
 	public int getId() {
 		return id;
 	}
 
-
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
-
 
 	public String getName() {
 		return name;
 	}
 
-
-
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
 
 	@Override
 	public String toString() {
 		return "Company [id=" + id + ", name=" + name + "]";
 	}
 
-
-	public static class CompanyBuilder {
+	public static class Builder {
 		private int id;
 		private String name;
 
-		public CompanyBuilder() {
+		public Builder() {
 		}
 
-		public CompanyBuilder setId(int id) {
+		public Builder setId(int id) {
 			this.id = id;
 			return this;
 		}
 
-		public CompanyBuilder setName(String name) {
+		public Builder setName(String name) {
 			this.name = name;
 			return this;
 		}

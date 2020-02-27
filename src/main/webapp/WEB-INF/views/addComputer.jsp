@@ -16,6 +16,11 @@
 <link href="resources/css/font-awesome.css" rel="stylesheet"
 	media="screen">
 <link href="resources/css/main.css" rel="stylesheet" media="screen">
+
+<link rel="stylesheet"
+	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet" href="/resources/demos/style.css">
+
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
@@ -47,17 +52,19 @@
 							</div>
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
-									type="date" class="form-control" id="introduced"
-									name="introduced" placeholder="Introduced date">
+									type="text" class="form-control" id="introduced"
+									name="introduced" placeholder="Introduced date"
+									readonly="readonly">
 							</div>
 							<div class="form-group">
 								<label for="discontinued">Discontinued date</label> <input
-									type="date" class="form-control" id="discontinued"
-									name="discontinued" placeholder="Discontinued date">
+									type="text" class="form-control" id="discontinued"
+									name="discontinued" placeholder="Discontinued date"
+									readonly="readonly">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
-									class="form-control" id="companyId" name="companyId" required>
+									class="form-control" id="companyId" name="companyId">
 									<option value="none" selected disabled hidden=hidden>Company
 										name</option>
 									<c:forEach items="${companies}" var="company">
@@ -78,5 +85,8 @@
 			</div>
 		</div>
 	</section>
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script src="resources/js/frontValidation.js"></script>
 </body>
 </html>

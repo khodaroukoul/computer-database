@@ -13,7 +13,6 @@ public class ComputerDAOTest {
 
 	@Before
 	public void setUp() {
-		System.setProperty("testCase", "true");
 	}
 
 	@After
@@ -31,5 +30,4 @@ public class ComputerDAOTest {
 		assertTrue(ComputerDAO.getInstance().delete(2));
 		assertFalse(ComputerDAO.getInstance().delete(0));
 	}
-
 }

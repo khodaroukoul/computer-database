@@ -7,10 +7,10 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.excilys.formation.cli.beans.Company;
-import fr.excilys.formation.cli.beans.Computer;
 import fr.excilys.formation.cli.dao.CompanyDAO;
 import fr.excilys.formation.cli.dao.ComputerDAO;
+import fr.excilys.formation.cli.models.Company;
+import fr.excilys.formation.cli.models.Computer;
 
 public class CliAction {
 	private static Logger logger = LoggerFactory.getLogger(CliAction.class);
@@ -40,7 +40,7 @@ public class CliAction {
 	}
 
 	public static void showComputers(Scanner scanner) {
-		List<Computer> computers = ComputerDAO.getInstance().getList().get();
+		List<Computer> computers = ComputerDAO.getInstance().getList();
 		computers.forEach(System.out::println);
 
 		System.out.println("----------------------------------------");
@@ -59,7 +59,7 @@ public class CliAction {
 		System.out.println("Please select number of computers to show:");
 		int lineNb = scanner.nextInt();
 		// Displaying lineNb computers from page pageNb
-		List<Computer> computersPerPage = ComputerDAO.getInstance().getListPerPage(pageNb,lineNb).get();
+		List<Computer> computersPerPage = ComputerDAO.getInstance().getListPerPage(pageNb,lineNb);
 		computersPerPage.forEach(System.out::println);
 		System.out.println("----------------------------------------");
 		System.out.println("****************************************");
@@ -92,7 +92,7 @@ public class CliAction {
 		System.out.println("Please enter the following info to create a computer:");
 		System.out.println("Please enter computer name:");
 		String computerName = scanner.next();
-		Computer computer = new Computer.ComputerBuilder(computerName).build();
+		Computer computer = new Computer.Builder(computerName).build();
 		System.out.println("Please enter computer introduced date (yyyy-MM-dd) or null for nothing:");
 		String computerIntro = scanner.next();
 		computer.setIntroduced(computerIntro.equals("null")?null:LocalDate.parse(computerIntro));
@@ -101,7 +101,7 @@ public class CliAction {
 		computer.setDiscontinued(computerDisc.equals("null")?null:LocalDate.parse(computerDisc));
 		System.out.println("Please enter company id");
 		int companyId = scanner.nextInt();
-		Company company = new Company.CompanyBuilder().setId(companyId).build();
+		Company company = new Company.Builder().setId(companyId).build();
 		computer.setCompany(company);
 		ComputerDAO.getInstance().create(computer);
 		computer = ComputerDAO.getInstance().find(computer.getId()).get();
@@ -148,7 +148,7 @@ public class CliAction {
 			if(scanner.nextInt()==4) {
 				System.out.println("Please enter the company id:");
 				int companyId = scanner.nextInt();
-				computer.setCompany(new Company.CompanyBuilder().setId(companyId).build());
+				computer.setCompany(new Company.Builder().setId(companyId).build());
 			}						
 
 			ComputerDAO.getInstance().update(computer);
