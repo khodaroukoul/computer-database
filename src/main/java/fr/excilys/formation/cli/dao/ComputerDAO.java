@@ -14,7 +14,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.excilys.formation.cli.jdbc.ConnectionSQL;
+import fr.excilys.formation.cli.jdbc.DataSource;
 import fr.excilys.formation.cli.mapper.ComputerMapper;
 import fr.excilys.formation.cli.models.Computer;
 
@@ -41,7 +41,6 @@ public final class ComputerDAO {
 	private static final String CLASS_NAME = "IN CLASS ComputerDAO. ";
 
 	ComputerMapper pcMapperInstance = ComputerMapper.getInstance();
-	ConnectionSQL connectionInstance = ConnectionSQL.getInstance();
 
 	private static volatile ComputerDAO instance = null;
 
@@ -60,7 +59,7 @@ public final class ComputerDAO {
 	}
 
 	public Computer create(Computer computer) {
-		try(Connection connect = connectionInstance.getConnection();
+		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(NEW_COMPUTER,Statement.RETURN_GENERATED_KEYS);
 				) {
 
@@ -93,7 +92,7 @@ public final class ComputerDAO {
 
 	public boolean delete(int id) {
 		boolean isDeleted = false;
-		try(Connection connect = connectionInstance.getConnection();
+		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepareFind = connect.prepareStatement(FIND_ONE_COMPUTER);
 				PreparedStatement prepareDelete = connect.prepareStatement(DELETE_COMPUTER);
 				) {
@@ -113,7 +112,7 @@ public final class ComputerDAO {
 	}
 
 	public Computer update(Computer computer) {
-		try(Connection connect = connectionInstance.getConnection();
+		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(UPDATE_COMPUTER);
 				) {
 			prepare.setString(1, computer.getName());
@@ -139,7 +138,7 @@ public final class ComputerDAO {
 
 	public Optional<Computer> find(int id) {
 		Optional<Computer> computer = Optional.empty();
-		try(Connection connect = connectionInstance.getConnection();
+		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ONE_COMPUTER);
 				) {
 			prepare.setInt(1,id);
@@ -156,7 +155,7 @@ public final class ComputerDAO {
 
 	public List<Computer> getList() {
 		List<Computer> computers = new ArrayList<>();
-		try(Connection connect = connectionInstance.getConnection();
+		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS);
 				ResultSet rst = prepare.executeQuery();
 				) {
@@ -173,7 +172,7 @@ public final class ComputerDAO {
 
 	public List<Computer> getListPerPage(int noPage, int nbLine) {
 		List<Computer> computers = new ArrayList<>();
-		try(Connection connect = connectionInstance.getConnection();
+		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS+FIND_PAGE);
 				) {
 

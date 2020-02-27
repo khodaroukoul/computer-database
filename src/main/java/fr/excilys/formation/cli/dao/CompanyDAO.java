@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.excilys.formation.cli.jdbc.ConnectionSQL;
+import fr.excilys.formation.cli.jdbc.DataSource;
 import fr.excilys.formation.cli.models.Company;
 
 public final class CompanyDAO{
@@ -22,7 +22,6 @@ public final class CompanyDAO{
 	private static final String CLASS_NAME = "IN CLASS CompanyDAO. ";
 
 	List<Company> companies = new ArrayList<>();
-	ConnectionSQL connectionInstance = ConnectionSQL.getInstance();
 
 	private static volatile CompanyDAO instance = null;
 
@@ -42,7 +41,7 @@ public final class CompanyDAO{
 
 	public List<Company> getList() {
 
-		try(Connection connect =  connectionInstance.getConnection();
+		try(Connection connect =  DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPANIES);
 				ResultSet rst = prepare.executeQuery();
 				) {
@@ -59,7 +58,7 @@ public final class CompanyDAO{
 	}
 
 	public List<Company> getListPerPage(int noPage, int nbLine) {
-		try(Connection connect =  connectionInstance.getConnection();
+		try(Connection connect =  DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPANIES + FIND_PAGE);
 				) {
 

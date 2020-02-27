@@ -25,6 +25,7 @@
 		<servlet-version>4.0.1</servlet-version>
 		<jsp-version>2.0</jsp-version>
 		<jstl-version>1.2</jstl-version>
+		<hikariCp-version>3.4.2</hikariCp-version>
 		<maven-checkstyle-version>3.1.1</maven-checkstyle-version>
 	</properties>
 
@@ -82,6 +83,14 @@
 			<version>${jstl-version}</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/com.zaxxer/HikariCP -->
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>${hikariCp-version}</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
@@ -128,7 +137,7 @@
 					<artifactId>maven-project-info-reports-plugin</artifactId>
 					<version>3.0.0</version>
 				</plugin>
-				
+
 			</plugins>
 		</pluginManagement>
 	</build>

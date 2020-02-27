@@ -18,16 +18,17 @@ public class ComputerDAOTest {
 	@After
 	public void tearDown() {
 	}
-
 	@Test
 	public void testFindComputer() {
-		assertTrue(ComputerDAO.getInstance().find(2).isPresent());
+		assertTrue(ComputerDAO.getInstance().find(5).isPresent());
 		assertFalse(ComputerDAO.getInstance().find(0).isPresent());
 	}
-
 	@Test
 	public void testDeleteComputer() {
 		assertTrue(ComputerDAO.getInstance().delete(2));
 		assertFalse(ComputerDAO.getInstance().delete(0));
 	}
+	
+	
+
 }
