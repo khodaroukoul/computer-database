@@ -64,7 +64,7 @@
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
-									class="form-control" id="companyId" name="companyId" required>
+									class="form-control" id="companyId" name="companyId">
 									<option value="none" selected disabled hidden=hidden>Company
 										name</option>
 									<c:forEach items="${companies}" var="company">

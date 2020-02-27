@@ -4,8 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import fr.excilys.formation.cli.beans.Company;
 import fr.excilys.formation.cli.dto.CompanyDTO;
+import fr.excilys.formation.cli.models.Company;
 
 public class CompanyMapper {
 
@@ -22,12 +22,12 @@ public class CompanyMapper {
 				}
 			}
 		}
-		
+
 		return CompanyMapper.instance;
 	}
 
 	public Optional<Company> getCompany(ResultSet res) throws SQLException {
-		Company company = new Company.CompanyBuilder().setName(res.getString("name"))
+		Company company = new Company.Builder().setName(res.getString("name"))
 				.setId(res.getInt("id")).build();
 		return Optional.ofNullable(company);
 	}
@@ -40,8 +40,7 @@ public class CompanyMapper {
 	}
 
 	public Company fromCompanyDTOToCompany(CompanyDTO companyDTO) {
-		Company company = new Company.CompanyBuilder().setId(companyDTO.getId()).build();
-		
+		Company company = new Company.Builder().setId(companyDTO.getId()).build();
 		return company;
 	}
 }

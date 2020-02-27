@@ -11,10 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import fr.excilys.formation.cli.beans.Computer;
 import fr.excilys.formation.cli.dao.ComputerDAO;
 import fr.excilys.formation.cli.dto.ComputerDTO;
 import fr.excilys.formation.cli.mapper.ComputerMapper;
+import fr.excilys.formation.cli.models.Computer;
 
 /**
  * Servlet implementation class DashboardCli

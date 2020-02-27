@@ -10,11 +10,15 @@ public class CompanyDTO implements Serializable {
 	private String name;
 
 	public CompanyDTO() {
-		super();
 	}
 
 	public CompanyDTO(int id) {
 		this.id = id;
+	}
+
+	public CompanyDTO(int id, String name) {
+		this.id = id;
+		this.name = name;
 	}
 
 	public int getId() {
