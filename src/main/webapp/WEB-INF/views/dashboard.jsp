@@ -35,7 +35,7 @@
 					<c:out value="${successMsg}" />
 				</div>
 			</c:if>
-			<h1 id="homeTitle">${fn:length(computers)} Computers found</h1>
+			<h1 id="homeTitle">${noOfRecords} Computers found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -101,7 +101,7 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<c:if test="${currentPage != 1}">
-					<li><a href="dashboardCli?pageJsp=${currentPage-1}"
+					<li><a href="dashboardCli?pageJsp=${currentPage-1}&recordsPerPageJsp=${recordsPerPageJsp}"
 						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 					</a></li>
 				</c:if>
@@ -125,11 +125,11 @@
 					value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}" />
 
 				<c:forEach begin="${begin}" end="${end}" var="i">
-					<li><a href="dashboardCli?pageJsp=${i}">${i}</a></li>
+					<li><a href="dashboardCli?pageJsp=${i}&recordsPerPageJsp=${recordsPerPageJsp}">${i}</a></li>
 				</c:forEach>
 
 				<c:if test="${currentPage lt noOfPages}">
-					<li><a href="dashboardCli?pageJsp=${currentPage+1}"
+					<li><a href="dashboardCli?pageJsp=${currentPage+1}&recordsPerPageJsp=${recordsPerPageJsp}"
 						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 					</a></li>
 				</c:if>

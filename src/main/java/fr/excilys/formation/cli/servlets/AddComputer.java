@@ -21,6 +21,7 @@ import fr.excilys.formation.cli.dao.ComputerDAO;
  */
 @WebServlet("/addComputer")
 public class AddComputer extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
 	private String addComputer = "/WEB-INF/views/addComputer.jsp";
 	private static final String ERROR_MSG = "Invalid Date! Introduced date is after discontinued date.";
@@ -45,16 +46,17 @@ public class AddComputer extends HttpServlet {
 		LocalDate introduced = introDate.isEmpty()?null:LocalDate.parse(introDate);
 		String discDate = request.getParameter("discontinued");
 		LocalDate discontinued = discDate.isEmpty()?null:LocalDate.parse(discDate);
-		boolean isAfter = discontinued.isAfter(introduced);
 		int idCompany = Integer.parseInt(request.getParameter("companyId"));
 		
 		if(introduced!=null && discontinued!=null) {
+			boolean isAfter = discontinued.isAfter(introduced);
 			if(!isAfter) {
 				request.setAttribute("errorMsg",ERROR_MSG);
 				doGet(request, response);
 				return;
 			}
 		}
+		
 		Company company = new Company.CompanyBuilder().setId(idCompany).build();
 		Computer computer = new Computer.ComputerBuilder(computerName).build();
 		computer.setIntroduced(introduced);

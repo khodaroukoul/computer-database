@@ -2,6 +2,7 @@ package fr.excilys.formation.cli.servlets;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -12,14 +13,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import fr.excilys.formation.cli.beans.Computer;
 import fr.excilys.formation.cli.dao.ComputerDAO;
+import fr.excilys.formation.cli.dto.ComputerDTO;
+import fr.excilys.formation.cli.mapper.ComputerMapper;
 
 /**
  * Servlet implementation class DashboardCli
  */
 @WebServlet("/dashboardCli")
 public class DashboardCli extends HttpServlet {
+	
 	private static final long serialVersionUID = 1L;
-	private int recordsPerPage = 10;
 	private String dashboard = "/WEB-INF/views/dashboard.jsp";
 
 	/**
@@ -30,25 +33,29 @@ public class DashboardCli extends HttpServlet {
 		request.setAttribute("successMsg",addComputerMsg);
 		
 		int page = 1;
+		int recordsPerPage = 10;
+		
 		if(request.getParameter("pageJsp") != null) {
 			page = Integer.parseInt(request.getParameter("pageJsp"));
 		}
 		
 		if(request.getParameter("recordsPerPageJsp") != null) {
 			recordsPerPage = Integer.parseInt(request.getParameter("recordsPerPageJsp"));
-		}
-
-		List<Computer> computers = ComputerDAO.getInstance().getList().get();
-		int noOfRecords = computers.size();
+		}		
+		
+		int noOfRecords = ComputerDAO.getInstance().getList().size();
         int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
         
+        request.setAttribute("noOfRecords", noOfRecords);
         request.setAttribute("noOfPages", noOfPages);		
 		request.setAttribute("currentPage", page);
 		request.setAttribute("recordsPerPageJsp", recordsPerPage);
 		
-		List<Computer> computersPerpage = ComputerDAO.getInstance().getListPerPage(page,recordsPerPage).get();
-		request.setAttribute("computers", computers);
-		request.setAttribute("computersPage", computersPerpage);
+		List<Computer> computersPerpage = ComputerDAO.getInstance().getListPerPage(page,recordsPerPage);
+		List<ComputerDTO> computersDTO = computersPerpage.stream().map(s -> ComputerMapper.getInstance()
+				.FromComputerToComputerDTO(s)).collect(Collectors.toList());
+		
+		request.setAttribute("computersPage", computersDTO);
 		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(dashboard);
 		dispatcher.forward(request,response);
 	}
@@ -59,5 +66,4 @@ public class DashboardCli extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
 	}
-
 }

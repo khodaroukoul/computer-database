@@ -40,7 +40,7 @@ public class CliAction {
 	}
 
 	public static void showComputers(Scanner scanner) {
-		List<Computer> computers = ComputerDAO.getInstance().getList().get();
+		List<Computer> computers = ComputerDAO.getInstance().getList();
 		computers.forEach(System.out::println);
 
 		System.out.println("----------------------------------------");
@@ -59,7 +59,7 @@ public class CliAction {
 		System.out.println("Please select number of computers to show:");
 		int lineNb = scanner.nextInt();
 		// Displaying lineNb computers from page pageNb
-		List<Computer> computersPerPage = ComputerDAO.getInstance().getListPerPage(pageNb,lineNb).get();
+		List<Computer> computersPerPage = ComputerDAO.getInstance().getListPerPage(pageNb,lineNb);
 		computersPerPage.forEach(System.out::println);
 		System.out.println("----------------------------------------");
 		System.out.println("****************************************");
