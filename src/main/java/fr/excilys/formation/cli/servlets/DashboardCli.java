@@ -29,7 +29,7 @@ public class DashboardCli extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String addComputerMsg = (String) request.getAttribute("successMsg");
+		String addComputerMsg = request.getParameter("successMsg");
 		request.setAttribute("successMsg",addComputerMsg);
 		
 		int page = 1;

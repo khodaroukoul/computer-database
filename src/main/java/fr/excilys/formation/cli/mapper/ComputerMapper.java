@@ -3,6 +3,7 @@ package fr.excilys.formation.cli.mapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import fr.excilys.formation.cli.dto.CompanyDTO;
@@ -47,24 +48,24 @@ public class ComputerMapper {
 	public ComputerDTO FromComputerToComputerDTO(Computer computer) {
 		CompanyDTO companyDTO = coMapperInstance.FromCompanyToCompanyDTO(computer.getCompany());
 		ComputerDTO computerDTO = new ComputerDTO(computer.getName(),
-				computer.getIntroduced()!=null?computer.getIntroduced().toString():null,
-						computer.getDiscontinued()!=null?computer.getDiscontinued().toString():null,companyDTO);
+				computer.getIntroduced()!=null?computer.getIntroduced()
+						.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")):null,
+				computer.getDiscontinued()!=null?computer.getDiscontinued()
+						.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")):null,companyDTO);
 		computerDTO.setId(computer.getId());
 
 		return computerDTO;
 	}
 
 	public Computer fromComputerDTOToComputer(ComputerDTO computerDTO) {
-		Company company = null;
-		if(computerDTO.getCompany()!=null) {
-			company = coMapperInstance.fromCompanyDTOToCompany(computerDTO.getCompany());
-		}
-
+		Company company = (computerDTO.getCompany()!=null) ?
+				coMapperInstance.fromCompanyDTOToCompany(computerDTO.getCompany()) : null;
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 		Computer computer = new Computer.Builder(computerDTO.getName())
 				.setIntroduced(computerDTO.getIntroduced().isBlank()?null:
-					LocalDate.parse(computerDTO.getIntroduced()))				
+					LocalDate.parse(computerDTO.getIntroduced(),dtf))				
 				.setDiscontinued(computerDTO.getDiscontinued().isBlank()?null:
-					LocalDate.parse(computerDTO.getDiscontinued()))
+					LocalDate.parse(computerDTO.getDiscontinued(),dtf))
 				.setCompany(company)
 				.build();
 

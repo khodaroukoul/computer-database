@@ -1,5 +1,5 @@
 $(function() {
-	$.datepicker.setDefaults({numberOfMonths: 3, dateFormat: 'yy-mm-dd'});
+	$.datepicker.setDefaults({numberOfMonths: 3, dateFormat: 'dd/mm/yy'});
 	$('#introduced').datepicker({onSelect: function(dateStr) {
 		$('#discontinued').datepicker('option', 'minDate', $(this).datepicker('getDate'));
 	}});

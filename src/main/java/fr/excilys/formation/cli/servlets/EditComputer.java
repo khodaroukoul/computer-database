@@ -21,27 +21,31 @@ import fr.excilys.formation.cli.models.Computer;
 import fr.excilys.formation.cli.validator.Validator;
 
 /**
- * Servlet implementation class AddComputer
+ * Servlet implementation class EditComputer
  */
-@WebServlet("/addComputer")
-public class AddComputer extends HttpServlet {
-
+@WebServlet("/editComputer")
+public class EditComputer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-	private String addComputer = "/WEB-INF/views/addComputer.jsp";
+
+	private String editComputer = "/WEB-INF/views/editComputer.jsp";
 	private static final String ERROR_MSG_DATE = "Invalid Date !!! Introduced date is not before discontinued date.";
-	private static final String ERROR_MSG_NAME = "Invalid Name !!! Please enter the computer name.";
-	private static final String SUCCESS_MSG = "New computer is added successfully.";
+	private static final String SUCCESS_MSG = "The computer is updated successfully.";
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int id = Integer.parseInt(request.getParameter("computerId"));		
+		Computer computer = ComputerDAO.getInstance().find(id).get();
+		ComputerDTO computerDTO = ComputerMapper.getInstance().FromComputerToComputerDTO(computer);
 		List<Company> companies = CompanyDAO.getInstance().getList();
 		List<CompanyDTO> companiesDTO = companies.stream().map(s -> new CompanyDTO(s.getId(),s.getName()))
 				.collect(Collectors.toList());
+
+		request.setAttribute("id",id);
+		request.setAttribute("computer", computerDTO);
 		request.setAttribute("companies", companiesDTO);
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(addComputer);
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(editComputer);
 		dispatcher.forward(request,response);
 	}
 
@@ -49,18 +53,13 @@ public class AddComputer extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		int computerId =Integer.parseInt(request.getParameter("computerId"));
 		String computerName = request.getParameter("computerName");
 		String introducedDate = request.getParameter("introduced");
 		String discontinuedDate = request.getParameter("discontinued");
-		CompanyDTO companyDTO = (request.getParameter("companyId")==null) ? null :	
-			new CompanyDTO(Integer.parseInt(request.getParameter("companyId")));
-		
-		if(Validator.computerNameValidator(computerName)) {
-			request.setAttribute("errorMsg",ERROR_MSG_NAME);
-			doGet(request, response);
-			return;
-		}
-        
+		CompanyDTO companyDTO = (request.getParameter("companyId").isBlank()) ? null :	
+				new CompanyDTO(Integer.parseInt(request.getParameter("companyId")));
+
 		if(!introducedDate.isBlank() && !discontinuedDate.isBlank()) {
 			boolean isAfter = Validator.dateValidator(introducedDate, discontinuedDate);
 			if(!isAfter) {
@@ -69,10 +68,11 @@ public class AddComputer extends HttpServlet {
 				return;
 			}
 		}
-
+		
 		ComputerDTO computerDTO = new ComputerDTO(computerName, introducedDate, discontinuedDate, companyDTO);
+		computerDTO.setId(computerId);
 		Computer computer = ComputerMapper.getInstance().fromComputerDTOToComputer(computerDTO);
-		ComputerDAO.getInstance().create(computer);
+		ComputerDAO.getInstance().update(computer);
 
 		response.sendRedirect(request.getContextPath()+"/dashboardCli?successMsg="+SUCCESS_MSG);
 	}
