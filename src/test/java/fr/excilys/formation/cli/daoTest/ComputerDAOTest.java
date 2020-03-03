@@ -20,13 +20,13 @@ public class ComputerDAOTest {
 	}
 	@Test
 	public void testFindComputer() {
-		assertTrue(ComputerDAO.getInstance().find(5).isPresent());
-		assertFalse(ComputerDAO.getInstance().find(0).isPresent());
+		assertTrue(ComputerDAO.getInstance().findById(5).isPresent());
+		assertFalse(ComputerDAO.getInstance().findById(1000).isPresent());
 	}
 	@Test
 	public void testDeleteComputer() {
-		assertTrue(ComputerDAO.getInstance().delete(2));
-		assertFalse(ComputerDAO.getInstance().delete(0));
+		assertTrue(ComputerDAO.getInstance().deleteComputerFromConsole(2));
+		assertFalse(ComputerDAO.getInstance().deleteComputerFromConsole(0));
 	}
 	
 	

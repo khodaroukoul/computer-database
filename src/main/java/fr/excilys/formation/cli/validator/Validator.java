@@ -3,6 +3,8 @@ package fr.excilys.formation.cli.validator;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class Validator {
 
 	public static boolean dateValidator(String firstDate, String secondDate) {
@@ -18,5 +20,15 @@ public class Validator {
 			isNameEmpty = true;
 		}
 		return isNameEmpty;
+	}
+	
+	public static boolean idValidator(String id) {
+		boolean isNumber = true;
+		if(!StringUtils.isNumeric(id)) {
+			isNumber = false;
+		} else if(Integer.parseInt(id)<=0) {
+			isNumber = false;
+		}
+		return isNumber;
 	}
 }

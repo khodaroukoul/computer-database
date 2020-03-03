@@ -26,6 +26,7 @@
 		<jsp-version>2.0</jsp-version>
 		<jstl-version>1.2</jstl-version>
 		<hikariCp-version>3.4.2</hikariCp-version>
+		<apache-lang3-version>3.9</apache-lang3-version>
 		<maven-checkstyle-version>3.1.1</maven-checkstyle-version>
 	</properties>
 
@@ -90,7 +91,12 @@
 			<version>${hikariCp-version}</version>
 		</dependency>
 
-
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apache-lang3-version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

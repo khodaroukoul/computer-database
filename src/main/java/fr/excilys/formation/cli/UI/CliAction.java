@@ -7,14 +7,16 @@ import java.util.Scanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.excilys.formation.cli.dao.CompanyDAO;
-import fr.excilys.formation.cli.dao.ComputerDAO;
 import fr.excilys.formation.cli.models.Company;
 import fr.excilys.formation.cli.models.Computer;
+import fr.excilys.formation.cli.service.CompanyService;
+import fr.excilys.formation.cli.service.ComputerService;
 
 public class CliAction {
 	private static Logger logger = LoggerFactory.getLogger(CliAction.class);
-	
+	private static ComputerService pcServiceInstance = ComputerService.getInstance();
+	private static CompanyService coServiceInstance = CompanyService.getInstance();
+
 	private static final String SHOW_COMPANIES = "ERROR IN SHOW COMPANIES";
 	private static final String SHOW_COMPUTERS = "ERROR IN SHOW COMPUTERS";
 	private static final String SHOW_COMPUTERS_PER_PAGE = "ERROR IN SHOW COMPUTERS PER PAGE";
@@ -25,7 +27,7 @@ public class CliAction {
 	private static final String COMPUTER_NOT_FOUND = "Computer is not found";
 
 	public static void showCompanies(Scanner scanner) {
-		List<Company> companies = CompanyDAO.getInstance().getList();
+		List<Company> companies = coServiceInstance.getList();
 		companies.forEach(System.out::println);
 
 		System.out.println("----------------------------------------");
@@ -40,7 +42,7 @@ public class CliAction {
 	}
 
 	public static void showComputers(Scanner scanner) {
-		List<Computer> computers = ComputerDAO.getInstance().getList();
+		List<Computer> computers = pcServiceInstance.getList();
 		computers.forEach(System.out::println);
 
 		System.out.println("----------------------------------------");
@@ -52,14 +54,14 @@ public class CliAction {
 			logger.error(SHOW_COMPUTERS);
 		}
 	}
-	
+
 	public static void showComputersPerPage(Scanner scanner) {
 		System.out.println("Please select page number:");
 		int pageNb = scanner.nextInt();
 		System.out.println("Please select number of computers to show:");
 		int lineNb = scanner.nextInt();
 		// Displaying lineNb computers from page pageNb
-		List<Computer> computersPerPage = ComputerDAO.getInstance().getListPerPage(pageNb,lineNb);
+		List<Computer> computersPerPage = pcServiceInstance.getListPerPage(pageNb,lineNb);
 		computersPerPage.forEach(System.out::println);
 		System.out.println("----------------------------------------");
 		System.out.println("****************************************");
@@ -74,8 +76,8 @@ public class CliAction {
 	public static void findComputer(Scanner scanner) {
 		System.out.println("Please select computer id to display:");
 		int computerId = scanner.nextInt();
-		if(ComputerDAO.getInstance().find(computerId).isPresent()) {
-			Computer computer = ComputerDAO.getInstance().find(computerId).get();
+		if(pcServiceInstance.findById(computerId).isPresent()) {
+			Computer computer = pcServiceInstance.findById(computerId).get();
 			System.out.println(computer.toString());
 		} else {
 			logger.info(COMPUTER_NOT_FOUND);
@@ -103,8 +105,8 @@ public class CliAction {
 		int companyId = scanner.nextInt();
 		Company company = new Company.Builder().setId(companyId).build();
 		computer.setCompany(company);
-		ComputerDAO.getInstance().create(computer);
-		computer = ComputerDAO.getInstance().find(computer.getId()).get();
+		pcServiceInstance.create(computer);
+		computer = pcServiceInstance.findById(computer.getId()).get();
 		System.out.println(computer.toString() + " is created");
 		System.out.println("Press enter to continue");
 		try {
@@ -117,9 +119,9 @@ public class CliAction {
 	public static void updateComputer(Scanner scanner) {
 		System.out.println("Please enter computer id to update:");
 		int computerId = scanner.nextInt();
-		if(ComputerDAO.getInstance().find(computerId).isPresent()) {
+		if(pcServiceInstance.findById(computerId).isPresent()) {
 			System.out.println("Computer you want to update is:");
-			Computer computer = ComputerDAO.getInstance().find(computerId).get();
+			Computer computer = pcServiceInstance.findById(computerId).get();
 			System.out.println(computer.toString());
 
 			System.out.println("To change the computer name press 1 or 0 to skip");
@@ -151,8 +153,8 @@ public class CliAction {
 				computer.setCompany(new Company.Builder().setId(companyId).build());
 			}						
 
-			ComputerDAO.getInstance().update(computer);
-			computer = ComputerDAO.getInstance().find(computerId).get();
+			pcServiceInstance.update(computer);
+			computer = pcServiceInstance.findById(computerId).get();
 			System.out.println(computer.toString());
 
 		} else {
@@ -169,9 +171,9 @@ public class CliAction {
 	public static void deleteComputer(Scanner scanner) {
 		System.out.println("Please enter computer id to delete:");
 		int computerId = scanner.nextInt();
-		if(ComputerDAO.getInstance().find(computerId).isPresent()) {
-			Computer computer = ComputerDAO.getInstance().find(computerId).get();
-			ComputerDAO.getInstance().delete(computerId);
+		if(pcServiceInstance.findById(computerId).isPresent()) {
+			Computer computer = pcServiceInstance.findById(computerId).get();
+			pcServiceInstance.deleteFromConsole(computerId);
 			System.out.println(computer.toString());
 		} else {
 			System.out.println("Computer is not found");

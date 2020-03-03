@@ -32,9 +32,17 @@ public final class ComputerDAO {
 			+ " (id, name, introduced, discontinued, company_id)"
 			+ " SELECT MAX(id)+1, ?, ?, ?, ? FROM computer";
 	private static final String DELETE_COMPUTER = "DELETE FROM computer WHERE id = ?";
+	private static final String DELETE_MULTI_COMPUTERS = "DELETE FROM computer WHERE id IN ( ";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name = ?, introduced = ?,"
 			+ " discontinued = ?, company_id = ? WHERE id = ?";
 	private static final String FIND_PAGE = " LIMIT ?, ?";
+	
+	private static final String FIND_COMPUTERS_BY_NAME = "SELECT cp.id, cp.name, cp.introduced,"
+			+ " cp.discontinued, co.id as coId, co.name AS coName"
+			+ " FROM computer AS cp LEFT JOIN company AS co"
+			+ " ON cp.company_id = co.id"
+			+ " WHERE cp.name LIKE ? " 
+			+ " ORDER BY cp.name";
 
 	private static Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
 	private static final String SQL_EXCEPTION = "SQL EXCEPTION ERROR IN ";
@@ -57,12 +65,12 @@ public final class ComputerDAO {
 		}
 		return ComputerDAO.instance;
 	}
-
-	public Computer create(Computer computer) {
+	
+	public boolean create(Computer computer) {
+		boolean isCreated = false;
 		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(NEW_COMPUTER,Statement.RETURN_GENERATED_KEYS);
 				) {
-
 			prepare.setString(1, computer.getName());
 			prepare.setTimestamp(2, computer.getIntroduced()!=null?Timestamp
 					.valueOf(computer.getIntroduced()
@@ -84,13 +92,43 @@ public final class ComputerDAO {
 				computer.setId(auto_id);
 				rst.close();
 			}
+			isCreated = true;
 		} catch (SQLException e) {
 			logger.error(SQL_EXCEPTION + "create " + CLASS_NAME + e.getMessage());
+			isCreated = false;
 		}
-		return computer;
+		return isCreated;
 	}
 
-	public boolean delete(int id) {
+
+	public boolean delete(String ids)  {
+		boolean isDeleted = false;
+		String[] listIds = ids.split(",");
+		
+		String delete = DELETE_MULTI_COMPUTERS;
+		
+		for(int i=0; i<listIds.length-1; i++) {
+			delete += " ?, ";
+		}
+		delete += "? )";
+		
+		try(Connection connect = DataSource.getConnection();
+				PreparedStatement prepare = connect.prepareStatement(delete);
+				) {
+			for(int i=1;i<=listIds.length;i++) {
+				prepare.setInt(i, Integer.parseInt(listIds[i-1]));
+			}
+			prepare.executeUpdate();
+			isDeleted = true;
+			
+		} catch (SQLException e) {
+			logger.error(SQL_EXCEPTION + "delete " + CLASS_NAME + e.getMessage());
+			isDeleted = false;
+		}
+		return isDeleted;
+	}
+	
+	public boolean deleteComputerFromConsole(int id) {
 		boolean isDeleted = false;
 		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepareFind = connect.prepareStatement(FIND_ONE_COMPUTER);
@@ -111,7 +149,8 @@ public final class ComputerDAO {
 		return isDeleted;
 	}
 
-	public Computer update(Computer computer) {
+	public boolean update(Computer computer) {
+		boolean isUpdated = false;
 		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(UPDATE_COMPUTER);
 				) {
@@ -129,14 +168,16 @@ public final class ComputerDAO {
 			}
 			prepare.setInt(5, computer.getId());
 			prepare.executeUpdate();
+			isUpdated = true;
 
 		} catch (SQLException e) {
 			logger.error(SQL_EXCEPTION + "update " + CLASS_NAME + e.getMessage());
+			isUpdated = false;
 		}
-		return computer;
+		return isUpdated;
 	}
 
-	public Optional<Computer> find(int id) {
+	public Optional<Computer> findById(int id) {
 		Optional<Computer> computer = Optional.empty();
 		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(FIND_ONE_COMPUTER);
@@ -151,6 +192,56 @@ public final class ComputerDAO {
 			logger.error(SQL_EXCEPTION + "find " + CLASS_NAME + e.getMessage());
 		}
 		return computer;
+	}
+
+	public List<Computer> findByName(String name, int noPage, int nbLine) {
+		List<Computer> computers = new ArrayList<>();
+		try(Connection connect = DataSource.getConnection();
+				PreparedStatement prepare = connect.prepareStatement(FIND_COMPUTERS_BY_NAME+FIND_PAGE);
+				) {
+
+			prepare.setString(1, '%' + name + '%');
+			prepare.setInt(2, (noPage-1)*nbLine);
+			prepare.setInt(3, nbLine);
+			ResultSet rst = prepare.executeQuery();
+			
+			while (rst.next()) {
+				Computer computer = pcMapperInstance.getComputer(rst).get();
+				computers.add(computer);
+			}
+
+			if(rst!=null) {
+				rst.close();
+			}
+			
+		} catch (SQLException e) {
+			logger.error(SQL_EXCEPTION + "findByName " + CLASS_NAME + e.getMessage());
+		}
+		return computers;
+	}
+	
+	public List<Computer> findByNameAll(String name) {
+		List<Computer> computers = new ArrayList<>();
+		try(Connection connect = DataSource.getConnection();
+				PreparedStatement prepare = connect.prepareStatement(FIND_COMPUTERS_BY_NAME);
+				) {
+
+			prepare.setString(1, '%' + name + '%');
+			ResultSet rst = prepare.executeQuery();
+			
+			while (rst.next()) {
+				Computer computer = pcMapperInstance.getComputer(rst).get();
+				computers.add(computer);
+			}
+
+			if(rst!=null) {
+				rst.close();
+			}
+			
+		} catch (SQLException e) {
+			logger.error(SQL_EXCEPTION + "findByName " + CLASS_NAME + e.getMessage());
+		}
+		return computers;
 	}
 
 	public List<Computer> getList() {
@@ -169,7 +260,7 @@ public final class ComputerDAO {
 		}
 		return computers;
 	}
-
+	
 	public List<Computer> getListPerPage(int noPage, int nbLine) {
 		List<Computer> computers = new ArrayList<>();
 		try(Connection connect = DataSource.getConnection();

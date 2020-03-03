@@ -41,7 +41,7 @@
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name" /> <input
+							class="form-control" placeholder="Search name"/> <input
 							type="submit" id="searchsubmit" value="Filter by name"
 							class="btn btn-primary" />
 					</form>
@@ -81,7 +81,7 @@
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
-				<c:forEach items="${computersPage}" var="computer">
+				<c:forEach items="${computers}" var="computer">
 					<tbody id="results">
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
@@ -101,7 +101,7 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<c:if test="${currentPage != 1}">
-					<li><a href="dashboardCli?pageJsp=${currentPage-1}&recordsPerPageJsp=${recordsPerPageJsp}"
+					<li><a href="dashboardCli?page=${currentPage-1}&recordsPerPage=${recordsPerPage}&search=${search}"
 						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 					</a></li>
 				</c:if>
@@ -125,11 +125,11 @@
 					value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}" />
 
 				<c:forEach begin="${begin}" end="${end}" var="i">
-					<li><a href="dashboardCli?pageJsp=${i}&recordsPerPageJsp=${recordsPerPageJsp}">${i}</a></li>
+					<li><a href="dashboardCli?page=${i}&recordsPerPage=${recordsPerPage}&search=${search}">${i}</a></li>
 				</c:forEach>
 
 				<c:if test="${currentPage lt noOfPages}">
-					<li><a href="dashboardCli?pageJsp=${currentPage+1}&recordsPerPageJsp=${recordsPerPageJsp}"
+					<li><a href="dashboardCli?page=${currentPage+1}&recordsPerPage=${recordsPerPage}&search=${search}"
 						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 					</a></li>
 				</c:if>
@@ -137,13 +137,13 @@
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPageJsp=10'">
+					onclick="location.href='dashboardCli?recordsPerPage=10&search=${search}'">
 					10</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPageJsp=50'">
+					onclick="location.href='dashboardCli?recordsPerPage=50&search=${search}'">
 					50</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPageJsp=100'">
+					onclick="location.href='dashboardCli?recordsPerPage=100&search=${search}'">
 					100</button>
 			</div>
 		</div>
