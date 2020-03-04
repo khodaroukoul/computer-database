@@ -16,6 +16,7 @@ import fr.excilys.formation.cli.models.Company;
 public final class CompanyDAO{
 	private static final String FIND_ALL_COMPANIES = "SELECT id, name FROM company";
 	private static final String FIND_PAGE = " LIMIT ?, ?";
+	private static final String COUNT_COMPANIES = "SELECT COUNT(id) AS RECORDS FROM company;";
 
 	private static Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 	private static final String SQL_EXCEPTION = "SQL EXCEPTION ERROR IN ";
@@ -79,5 +80,22 @@ public final class CompanyDAO{
 		}
 		
 		return companies;
+	}
+
+	public int allRecords() {
+		int records = 0;
+		try(Connection connect = DataSource.getConnection();
+				PreparedStatement prepare = connect.prepareStatement(COUNT_COMPANIES);
+				ResultSet rst = prepare.executeQuery();
+				) {
+
+			if(rst.next()) {
+				records = rst.getInt("RECORDS");
+			}
+
+		} catch (SQLException e) {
+			logger.error(SQL_EXCEPTION + "allRecord " + CLASS_NAME + e.getMessage());
+		}
+		return records;
 	}
 }

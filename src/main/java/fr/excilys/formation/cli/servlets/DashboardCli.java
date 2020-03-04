@@ -60,13 +60,13 @@ public class DashboardCli extends HttpServlet {
 			if(!computers.isEmpty()) {
 				computersDTO = computers.stream().map(s -> ComputerMapper.getInstance()
 						.FromComputerToComputerDTO(s)).collect(Collectors.toList());
-				noOfRecords = pcService.findByNameAll(computerName).size();
+				noOfRecords = pcService.recordsFoundByName(computerName);
 			}
 		} else {
 			computers = pcService.getListPerPage(page,recordsPerPage);
 			computersDTO = computers.stream().map(s -> ComputerMapper.getInstance()
 					.FromComputerToComputerDTO(s)).collect(Collectors.toList());
-			noOfRecords = pcService.getList().size();
+			noOfRecords = pcService.allRecords();
 		}
 
 		int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
