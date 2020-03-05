@@ -61,7 +61,7 @@ public class CliAction {
 		System.out.println("Please select number of computers to show:");
 		int lineNb = scanner.nextInt();
 		// Displaying lineNb computers from page pageNb
-		List<Computer> computersPerPage = pcServiceInstance.getListPerPage(pageNb,lineNb);
+		List<Computer> computersPerPage = pcServiceInstance.getListPerPage(pageNb,lineNb,"cp.name");
 		computersPerPage.forEach(System.out::println);
 		System.out.println("----------------------------------------");
 		System.out.println("****************************************");
