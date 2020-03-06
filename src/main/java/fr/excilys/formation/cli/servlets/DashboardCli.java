@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import fr.excilys.formation.cli.dto.ComputerDTO;
 import fr.excilys.formation.cli.mapper.ComputerMapper;
 import fr.excilys.formation.cli.models.Computer;
+import fr.excilys.formation.cli.service.CompanyService;
 import fr.excilys.formation.cli.service.ComputerService;
 import fr.excilys.formation.cli.service.QuerySQL;
 
@@ -58,6 +59,11 @@ public class DashboardCli extends HttpServlet {
 			orderBy = QuerySQL.sortSQL(request.getParameter("order"));
 			request.setAttribute("order", request.getParameter("order"));
 		}
+		
+		if(request.getParameter("searchCompany")!=null) {
+			int idCompany = Integer.parseInt(request.getParameter("searchCompany"));
+			CompanyService.getInstance().deleteCompany(idCompany);
+		}
 
 		if(request.getParameter("search")!=null && !request.getParameter("search").isBlank()) {
 			String computerName = request.getParameter("search");
@@ -73,7 +79,7 @@ public class DashboardCli extends HttpServlet {
 			computers = pcService.getListPerPage(page,recordsPerPage,orderBy);
 			computersDTO = computers.stream().map(s -> ComputerMapper.getInstance()
 					.FromComputerToComputerDTO(s)).collect(Collectors.toList());
-			noOfRecords = pcService.allRecords();
+			noOfRecords = pcService.countAll();
 		}
 
 		int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);

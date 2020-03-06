@@ -17,6 +17,9 @@ public final class CompanyDAO{
 	private static final String FIND_ALL_COMPANIES = "SELECT id, name FROM company";
 	private static final String FIND_PAGE = " LIMIT ?, ?";
 	private static final String COUNT_COMPANIES = "SELECT COUNT(id) AS RECORDS FROM company;";
+	private static final String DELETE_COMPANY = "DELETE FROM company WHERE id = ?";
+	private static final String DELETE_COMPUTERS_BY_ID_COMPANY = "DELETE FROM computer WHERE company_id = ?";
+	private static final String FIND_COMPANY = "SELECT id, name FROM company WHERE id=?";
 
 	private static Logger logger = LoggerFactory.getLogger(CompanyDAO.class);
 	private static final String SQL_EXCEPTION = "SQL EXCEPTION ERROR IN ";
@@ -74,11 +77,11 @@ public final class CompanyDAO{
 			if(rst!=null) {
 				rst.close();
 			}
-			
+
 		} catch (SQLException e) {
 			logger.error(SQL_EXCEPTION + "getListPerPage " + CLASS_NAME + e.getMessage());
 		}
-		
+
 		return companies;
 	}
 
@@ -97,5 +100,56 @@ public final class CompanyDAO{
 			logger.error(SQL_EXCEPTION + "allRecord " + CLASS_NAME + e.getMessage());
 		}
 		return records;
+	}
+
+	public void deleteCompany(int idCompany)  {
+
+		try {
+			Connection connect = DataSource.getConnection();
+			try(PreparedStatement prepareFind = connect.prepareStatement(FIND_COMPANY);
+					PreparedStatement prepareDelete = connect.prepareStatement(DELETE_COMPANY);
+					PreparedStatement prepareDeleteComputer = connect.prepareStatement(DELETE_COMPUTERS_BY_ID_COMPANY);
+					) {
+				connect.setAutoCommit(false);
+				prepareFind.setInt(1, idCompany);
+				ResultSet rst = prepareFind.executeQuery(); 
+				
+				deleteCompanyTransaction(idCompany, connect, prepareDelete, prepareDeleteComputer, rst);
+				
+				if(rst!=null) {
+					rst.close();					
+				}
+
+			} catch (SQLException e) {
+				connect.rollback();
+				logger.error(SQL_EXCEPTION + "deleteCompany " + CLASS_NAME + e.getMessage());
+			} finally {
+				connect.setAutoCommit(true);
+			}
+		} catch (SQLException e) {
+			logger.error(SQL_EXCEPTION + "deleteCompanyConnection " + CLASS_NAME + e.getMessage());
+		}		
+	}
+
+	private void deleteCompanyTransaction(int idCompany, Connection connect, PreparedStatement prepareDelete,
+			PreparedStatement prepareDeleteComputer, ResultSet rst) throws SQLException {
+		if(rst.first()) {
+			int computersDeleted = deleteCompanyPrepared(idCompany, prepareDeleteComputer);
+			if(computersDeleted>0) {
+				int deletedCompanies = deleteCompanyPrepared(idCompany, prepareDelete);
+				if (deletedCompanies > 0) {
+					connect.commit();
+				} else {
+					connect.rollback();
+				}
+			} else {
+				connect.rollback();
+			}
+		}
+	}
+
+	private int deleteCompanyPrepared(int idCompany, PreparedStatement prepareDelete) throws SQLException {
+		prepareDelete.setInt(1, idCompany);
+		return prepareDelete.executeUpdate();
 	}
 }

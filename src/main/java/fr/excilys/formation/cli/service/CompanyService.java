@@ -35,4 +35,8 @@ public class CompanyService {
 	public int allRecords() {
 		return coDaoInstance.allRecords();		
 	}
+
+	public void deleteCompany(int idCompany) {
+		coDaoInstance.deleteCompany(idCompany);		
+	}
 }

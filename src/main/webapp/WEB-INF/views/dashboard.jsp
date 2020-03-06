@@ -39,10 +39,18 @@
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
-
 						<input type="search" id="searchbox" name="search"
 							class="form-control" placeholder="Search name" /> <input
 							type="submit" id="searchsubmit" value="Filter by name"
+							class="btn btn-primary" />
+					</form>
+				</div>
+				
+				<div class="pull-left" style="margin-left:30px;">
+					<form id="searchForm" action="#" method="GET" class="form-inline">
+						<input type="search" id="searchboxCompany" name="searchCompany"
+							class="form-control" placeholder="Search id" /> <input
+							type="submit" id="searchsubmitCompany" value="Delete company by id"
 							class="btn btn-primary" />
 					</form>
 				</div>

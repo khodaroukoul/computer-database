@@ -289,7 +289,7 @@ public final class ComputerDAO {
 		return records;
 	}
 
-	public int allRecords() {
+	public int countAll() {
 		int records = 0;
 		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(COUNT_COMPUTERS);

@@ -62,7 +62,7 @@ public class ComputerService {
 		return pcDaoInstance.recordsFoundByName(name);
 	}
 	
-	public int allRecords() {
-		return pcDaoInstance.allRecords();
+	public int countAll() {
+		return pcDaoInstance.countAll();
 	}
 }
