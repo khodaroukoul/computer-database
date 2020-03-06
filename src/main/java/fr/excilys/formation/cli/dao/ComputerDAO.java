@@ -23,7 +23,7 @@ public final class ComputerDAO {
 	private static final String FIND_ALL_COMPUTERS = "SELECT cp.id, cp.name, cp.introduced,"
 			+ " cp.discontinued, co.id as coId, co.name AS coName"
 			+ " FROM computer AS cp LEFT JOIN company AS co"
-			+ " ON cp.company_id = co.id";
+			+ " ON cp.company_id = co.id ORDER BY ";
 	private static final String FIND_ONE_COMPUTER = "SELECT cp.id, cp.name, cp.introduced,"
 			+ " cp.discontinued, co.id as coId, co.name AS coName"
 			+ " FROM computer AS cp LEFT JOIN company AS co"
@@ -35,14 +35,17 @@ public final class ComputerDAO {
 	private static final String DELETE_MULTI_COMPUTERS = "DELETE FROM computer WHERE id IN ( ";
 	private static final String UPDATE_COMPUTER = "UPDATE computer SET name = ?, introduced = ?,"
 			+ " discontinued = ?, company_id = ? WHERE id = ?";
-	private static final String FIND_PAGE = " LIMIT ?, ?";
-	
+	private static final String FIND_PAGE = " LIMIT ?, ?;";
+
 	private static final String FIND_COMPUTERS_BY_NAME = "SELECT cp.id, cp.name, cp.introduced,"
 			+ " cp.discontinued, co.id as coId, co.name AS coName"
 			+ " FROM computer AS cp LEFT JOIN company AS co"
 			+ " ON cp.company_id = co.id"
 			+ " WHERE cp.name LIKE ? " 
-			+ " ORDER BY cp.name";
+			+ " ORDER BY ";
+	private static final String COUNT_COMPUTERS_FOUND_BY_NAME = "SELECT COUNT(cp.id) AS RECORDS FROM computer AS cp"
+			+ "  WHERE cp.name LIKE ?;";
+	private static final String COUNT_COMPUTERS = "SELECT COUNT(id) AS RECORDS FROM computer;";
 
 	private static Logger logger = LoggerFactory.getLogger(ComputerDAO.class);
 	private static final String SQL_EXCEPTION = "SQL EXCEPTION ERROR IN ";
@@ -65,7 +68,7 @@ public final class ComputerDAO {
 		}
 		return ComputerDAO.instance;
 	}
-	
+
 	public boolean create(Computer computer) {
 		boolean isCreated = false;
 		try(Connection connect = DataSource.getConnection();
@@ -104,14 +107,14 @@ public final class ComputerDAO {
 	public boolean delete(String ids)  {
 		boolean isDeleted = false;
 		String[] listIds = ids.split(",");
-		
+
 		String delete = DELETE_MULTI_COMPUTERS;
-		
+
 		for(int i=0; i<listIds.length-1; i++) {
 			delete += " ?, ";
 		}
 		delete += "? )";
-		
+
 		try(Connection connect = DataSource.getConnection();
 				PreparedStatement prepare = connect.prepareStatement(delete);
 				) {
@@ -120,14 +123,14 @@ public final class ComputerDAO {
 			}
 			prepare.executeUpdate();
 			isDeleted = true;
-			
+
 		} catch (SQLException e) {
 			logger.error(SQL_EXCEPTION + "delete " + CLASS_NAME + e.getMessage());
 			isDeleted = false;
 		}
 		return isDeleted;
 	}
-	
+
 	public boolean deleteComputerFromConsole(int id) {
 		boolean isDeleted = false;
 		try(Connection connect = DataSource.getConnection();
@@ -194,17 +197,16 @@ public final class ComputerDAO {
 		return computer;
 	}
 
-	public List<Computer> findByName(String name, int noPage, int nbLine) {
+	public List<Computer> findByName(String name, int noPage, int nbLine, String orderBy) {
 		List<Computer> computers = new ArrayList<>();
 		try(Connection connect = DataSource.getConnection();
-				PreparedStatement prepare = connect.prepareStatement(FIND_COMPUTERS_BY_NAME+FIND_PAGE);
+				PreparedStatement prepare = connect.prepareStatement(FIND_COMPUTERS_BY_NAME+orderBy+FIND_PAGE);
 				) {
-
 			prepare.setString(1, '%' + name + '%');
 			prepare.setInt(2, (noPage-1)*nbLine);
 			prepare.setInt(3, nbLine);
 			ResultSet rst = prepare.executeQuery();
-			
+
 			while (rst.next()) {
 				Computer computer = pcMapperInstance.getComputer(rst).get();
 				computers.add(computer);
@@ -213,31 +215,7 @@ public final class ComputerDAO {
 			if(rst!=null) {
 				rst.close();
 			}
-			
-		} catch (SQLException e) {
-			logger.error(SQL_EXCEPTION + "findByName " + CLASS_NAME + e.getMessage());
-		}
-		return computers;
-	}
-	
-	public List<Computer> findByNameAll(String name) {
-		List<Computer> computers = new ArrayList<>();
-		try(Connection connect = DataSource.getConnection();
-				PreparedStatement prepare = connect.prepareStatement(FIND_COMPUTERS_BY_NAME);
-				) {
 
-			prepare.setString(1, '%' + name + '%');
-			ResultSet rst = prepare.executeQuery();
-			
-			while (rst.next()) {
-				Computer computer = pcMapperInstance.getComputer(rst).get();
-				computers.add(computer);
-			}
-
-			if(rst!=null) {
-				rst.close();
-			}
-			
 		} catch (SQLException e) {
 			logger.error(SQL_EXCEPTION + "findByName " + CLASS_NAME + e.getMessage());
 		}
@@ -260,11 +238,11 @@ public final class ComputerDAO {
 		}
 		return computers;
 	}
-	
-	public List<Computer> getListPerPage(int noPage, int nbLine) {
+
+	public List<Computer> getListPerPage(int noPage, int nbLine, String orderBy) {
 		List<Computer> computers = new ArrayList<>();
 		try(Connection connect = DataSource.getConnection();
-				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS+FIND_PAGE);
+				PreparedStatement prepare = connect.prepareStatement(FIND_ALL_COMPUTERS+orderBy+FIND_PAGE);
 				) {
 
 			prepare.setInt(1, (noPage-1)*nbLine);
@@ -284,5 +262,47 @@ public final class ComputerDAO {
 			logger.error(SQL_EXCEPTION + "getListPerPage " + CLASS_NAME + e.getMessage());
 		}
 		return computers;
+	}
+
+
+
+	public int recordsFoundByName(String name) {
+		int records = 0;
+		try(Connection connect = DataSource.getConnection();
+				PreparedStatement prepare = connect.prepareStatement(COUNT_COMPUTERS_FOUND_BY_NAME);
+				) {
+
+			prepare.setString(1, '%' + name + '%');
+			ResultSet rst = prepare.executeQuery();
+
+			if(rst.next()) {
+				records = rst.getInt("RECORDS");
+			}
+
+			if(rst!=null) {
+				rst.close();
+			}
+
+		} catch (SQLException e) {
+			logger.error(SQL_EXCEPTION + "recordsFoundByName " + CLASS_NAME + e.getMessage());
+		}
+		return records;
+	}
+
+	public int countAll() {
+		int records = 0;
+		try(Connection connect = DataSource.getConnection();
+				PreparedStatement prepare = connect.prepareStatement(COUNT_COMPUTERS);
+				ResultSet rst = prepare.executeQuery();
+				) {
+
+			if(rst.next()) {
+				records = rst.getInt("RECORDS");
+			}
+
+		} catch (SQLException e) {
+			logger.error(SQL_EXCEPTION + "allRecord " + CLASS_NAME + e.getMessage());
+		}
+		return records;
 	}
 }

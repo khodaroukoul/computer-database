@@ -46,19 +46,23 @@ public class ComputerService {
 		return pcDaoInstance.findById(id);
 	}
 
-	public List<Computer> findByName(String name, int noPage, int nbLine){
-		return pcDaoInstance.findByName(name, noPage, nbLine);
-	}
-
-	public List<Computer> findByNameAll(String name){
-		return pcDaoInstance.findByNameAll(name);
+	public List<Computer> findByName(String name, int noPage, int nbLine, String orderBy){
+		return pcDaoInstance.findByName(name, noPage, nbLine, orderBy);
 	}
 
 	public List<Computer> getList(){
 		return pcDaoInstance.getList();
 	}
 
-	public List<Computer> getListPerPage(int noPage, int nbLine){
-		return pcDaoInstance.getListPerPage(noPage, nbLine);
+	public List<Computer> getListPerPage(int noPage, int nbLine,String orderBy){
+		return pcDaoInstance.getListPerPage(noPage, nbLine, orderBy);
+	}
+
+	public int recordsFoundByName(String name){
+		return pcDaoInstance.recordsFoundByName(name);
+	}
+	
+	public int countAll() {
+		return pcDaoInstance.countAll();
 	}
 }

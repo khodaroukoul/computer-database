@@ -21,8 +21,8 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboardCli">
-				Application - Computer Database </a>
+			<a class="navbar-brand" href="dashboardCli"> Application -
+				Computer Database </a>
 		</div>
 	</header>
 
@@ -35,14 +35,22 @@
 					<c:out value="${successMsg}" />
 				</div>
 			</c:if>
-			<h1 id="homeTitle">${noOfRecords} Computers found</h1>
+			<h1 id="homeTitle">${noOfRecords}&nbsp;Computers&nbsp;found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
-
 						<input type="search" id="searchbox" name="search"
-							class="form-control" placeholder="Search name"/> <input
+							class="form-control" placeholder="Search name" /> <input
 							type="submit" id="searchsubmit" value="Filter by name"
+							class="btn btn-primary" />
+					</form>
+				</div>
+				
+				<div class="pull-left" style="margin-left:30px;">
+					<form id="searchForm" action="#" method="GET" class="form-inline">
+						<input type="search" id="searchboxCompany" name="searchCompany"
+							class="form-control" placeholder="Search id" /> <input
+							type="submit" id="searchsubmitCompany" value="Delete company by id"
 							class="btn btn-primary" />
 					</form>
 				</div>
@@ -72,12 +80,16 @@
 									class="fa fa-trash-o fa-lg"></i>
 							</a>
 						</span></th>
-						<th>Computer name</th>
-						<th>Introduced date</th>
-						<!-- Table header for Discontinued Date -->
-						<th>Discontinued date</th>
-						<!-- Table header for Company -->
-						<th>Company</th>
+
+						<th><a href="dashboardCli?order=computer&search=${search}"
+							onclick="">Computer Name</a></th>
+						<th><a href="dashboardCli?order=introduced&search=${search}"
+							onclick="">Introduced Date</a></th>
+						<th><a
+							href="dashboardCli?order=discontinued&search=${search}"
+							onclick="">Discontinued date</a></th>
+						<th><a href="dashboardCli?order=company&search=${search}"
+							onclick="">Company</a></th>
 					</tr>
 				</thead>
 				<!-- Browse attribute computers -->
@@ -86,7 +98,8 @@
 						<tr>
 							<td class="editMode"><input type="checkbox" name="cb"
 								class="cb" value="${computer.id}"></td>
-							<td><a href="editComputer?computerId=${computer.id}" onclick="">${computer.name}</a></td>
+							<td><a href="editComputer?computerId=${computer.id}"
+								onclick="">${computer.name}</a></td>
 							<td>${computer.introduced}</td>
 							<td>${computer.discontinued}</td>
 							<td>${computer.company.name}</td>
@@ -101,7 +114,8 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<c:if test="${currentPage != 1}">
-					<li><a href="dashboardCli?page=${currentPage-1}&recordsPerPage=${recordsPerPage}&search=${search}"
+					<li><a
+						href="dashboardCli?page=${currentPage-1}&recordsPerPage=${recordsPerPage}&search=${search}&order=${order}"
 						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 					</a></li>
 				</c:if>
@@ -110,7 +124,7 @@
 				<c:set var="p" value="${currentPage}" />
 
 				<%-- amount of page links to be displayed --%>
-				<c:set var="l" value="5" />
+				<c:set var="l" value="6" />
 
 				<%-- minimum link range ahead/behind --%>
 				<c:set var="r" value="${l / 2}" />
@@ -125,11 +139,13 @@
 					value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}" />
 
 				<c:forEach begin="${begin}" end="${end}" var="i">
-					<li><a href="dashboardCli?page=${i}&recordsPerPage=${recordsPerPage}&search=${search}">${i}</a></li>
+					<li><a
+						href="dashboardCli?page=${i}&recordsPerPage=${recordsPerPage}&search=${search}&order=${order}">${i}</a></li>
 				</c:forEach>
 
 				<c:if test="${currentPage lt noOfPages}">
-					<li><a href="dashboardCli?page=${currentPage+1}&recordsPerPage=${recordsPerPage}&search=${search}"
+					<li><a
+						href="dashboardCli?page=${currentPage+1}&recordsPerPage=${recordsPerPage}&search=${search}&order=${order}"
 						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 					</a></li>
 				</c:if>
@@ -137,13 +153,13 @@
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPage=10&search=${search}'">
+					onclick="location.href='dashboardCli?recordsPerPage=10&search=${search}&order=${order}'">
 					10</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPage=50&search=${search}'">
+					onclick="location.href='dashboardCli?recordsPerPage=50&search=${search}&order=${order}'">
 					50</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPage=100&search=${search}'">
+					onclick="location.href='dashboardCli?recordsPerPage=100&search=${search}&order=${order}'">
 					100</button>
 			</div>
 		</div>
@@ -152,6 +168,5 @@
 	<script src="resources/js/jquery.min.js"></script>
 	<script src="resources/js/bootstrap.min.js"></script>
 	<script src="resources/js/dashboard.js"></script>
-
 </body>
 </html>

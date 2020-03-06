@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import fr.excilys.formation.cli.dto.ComputerDTO;
 import fr.excilys.formation.cli.mapper.ComputerMapper;
 import fr.excilys.formation.cli.models.Computer;
+import fr.excilys.formation.cli.service.CompanyService;
 import fr.excilys.formation.cli.service.ComputerService;
+import fr.excilys.formation.cli.service.QuerySQL;
 
 /**
  * Servlet implementation class DashboardCli
@@ -36,10 +38,10 @@ public class DashboardCli extends HttpServlet {
 		if(addComputerMsg!=null && !addComputerMsg.isBlank()) {
 			request.setAttribute("successMsg",addComputerMsg);
 		}
-		
+
 		List<Computer> computers = new ArrayList<>();
 		List<ComputerDTO> computersDTO = new ArrayList<>();
-		
+
 		int noOfRecords = 0;
 		int page = 1;
 		int recordsPerPage = 10;
@@ -50,27 +52,38 @@ public class DashboardCli extends HttpServlet {
 
 		if(request.getParameter("recordsPerPage") != null) {
 			recordsPerPage = Integer.parseInt(request.getParameter("recordsPerPage"));
+		}		
+
+		String orderBy = "cp.name";
+		if(request.getParameter("order") != null) {
+			orderBy = QuerySQL.sortSQL(request.getParameter("order"));
+			request.setAttribute("order", request.getParameter("order"));
 		}
 		
+		if(request.getParameter("searchCompany")!=null) {
+			int idCompany = Integer.parseInt(request.getParameter("searchCompany"));
+			CompanyService.getInstance().deleteCompany(idCompany);
+		}
+
 		if(request.getParameter("search")!=null && !request.getParameter("search").isBlank()) {
 			String computerName = request.getParameter("search");
-			computers = pcService.findByName(computerName,page,recordsPerPage);
+			computers = pcService.findByName(computerName,page,recordsPerPage,orderBy);
 			request.setAttribute("search", computerName);
 
 			if(!computers.isEmpty()) {
 				computersDTO = computers.stream().map(s -> ComputerMapper.getInstance()
 						.FromComputerToComputerDTO(s)).collect(Collectors.toList());
-				noOfRecords = pcService.findByNameAll(computerName).size();
+				noOfRecords = pcService.recordsFoundByName(computerName);
 			}
 		} else {
-			computers = pcService.getListPerPage(page,recordsPerPage);
+			computers = pcService.getListPerPage(page,recordsPerPage,orderBy);
 			computersDTO = computers.stream().map(s -> ComputerMapper.getInstance()
 					.FromComputerToComputerDTO(s)).collect(Collectors.toList());
-			noOfRecords = pcService.getList().size();
+			noOfRecords = pcService.countAll();
 		}
 
 		int noOfPages = (int) Math.ceil(noOfRecords * 1.0 / recordsPerPage);
-		
+
 		request.setAttribute("noOfRecords", noOfRecords);
 		request.setAttribute("noOfPages", noOfPages);		
 		request.setAttribute("currentPage", page);

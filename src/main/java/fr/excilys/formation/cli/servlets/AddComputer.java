@@ -29,11 +29,13 @@ public class AddComputer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
 	private String addComputer = "/WEB-INF/views/addComputer.jsp";
-	private static final String ERROR_MSG_DATE = "Invalid Date !!! Introduced date is not before discontinued date.";
 	private static final String ERROR_MSG_NAME = "Invalid Name !!! Please enter the computer name.";
+	private static final String ERROR_MSG_DATE_INTRODUCED = "Invalid intorduced date format !!!";
+	private static final String ERROR_MSG_DATE_DISCONTINUED = "Invalid discontinued date format !!!";
+	private static final String ERROR_MSG_DATE = "Invalid Date !!! Introduced date is not before discontinued date.";
 	private static final String ERROR_MSG_COMPANY = "Invalid Company !!! Please choose company.";
 	private static final String SUCCESS_MSG = "New computer is added successfully.";
-
+	
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
@@ -42,7 +44,7 @@ public class AddComputer extends HttpServlet {
 		List<CompanyDTO> companiesDTO = companies.stream().map(s -> new CompanyDTO(s.getId(),s.getName()))
 				.collect(Collectors.toList());
 		request.setAttribute("companies", companiesDTO);
-		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(addComputer);
+		RequestDispatcher dispatcher = request.getRequestDispatcher(addComputer);
 		dispatcher.forward(request,response);
 	}
 
@@ -51,17 +53,28 @@ public class AddComputer extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String computerName = request.getParameter("computerName");
-		if(Validator.computerNameValidator(computerName)) {
+		if(Validator.isNameEmpty(computerName)) {
 			request.setAttribute("errorMsg",ERROR_MSG_NAME);
 			doGet(request, response);
 			return;
 		}
 
 		String introducedDate = request.getParameter("introduced");
+		if(Validator.isNotValidDateFormat(introducedDate)) {
+			request.setAttribute("errorMsg",ERROR_MSG_DATE_INTRODUCED);
+			doGet(request, response);
+			return;
+		}
+		
 		String discontinuedDate = request.getParameter("discontinued");
+		if(Validator.isNotValidDateFormat(discontinuedDate)) {
+			request.setAttribute("errorMsg",ERROR_MSG_DATE_DISCONTINUED);
+			doGet(request, response);
+			return;
+		}
+		
 		if(!introducedDate.isBlank() && !discontinuedDate.isBlank()) {
-			boolean isAfter = Validator.dateValidator(introducedDate, discontinuedDate);
-			if(!isAfter) {
+			if(Validator.isFirstDateAfterSecond(introducedDate, discontinuedDate)) {
 				request.setAttribute("errorMsg",ERROR_MSG_DATE);
 				doGet(request, response);
 				return;
@@ -70,7 +83,7 @@ public class AddComputer extends HttpServlet {
 
 		String companyId = request.getParameter("companyId");
 		if(companyId!=null) {
-			if(!Validator.idValidator(companyId)) {
+			if(Validator.isNotValidId(companyId) || Validator.isNotValidCompany(companyId)) {
 				request.setAttribute("errorMsg",ERROR_MSG_COMPANY);
 				doGet(request, response);
 				return;

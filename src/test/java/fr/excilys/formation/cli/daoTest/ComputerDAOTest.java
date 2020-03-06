@@ -1,16 +1,16 @@
 package fr.excilys.formation.cli.daoTest;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.excilys.formation.cli.dao.ComputerDAO;
+import fr.excilys.formation.cli.service.ComputerService;
 
 public class ComputerDAOTest {
-
+	ComputerService pcServiceInstance = ComputerService.getInstance();
 	@Before
 	public void setUp() {
 	}
@@ -20,15 +20,13 @@ public class ComputerDAOTest {
 	}
 	@Test
 	public void testFindComputer() {
-		assertTrue(ComputerDAO.getInstance().findById(5).isPresent());
-		assertFalse(ComputerDAO.getInstance().findById(1000).isPresent());
+		assertTrue(pcServiceInstance.findById(5).isPresent());
+		assertFalse(pcServiceInstance.findById(2).isPresent());
 	}
+
 	@Test
 	public void testDeleteComputer() {
-		assertTrue(ComputerDAO.getInstance().deleteComputerFromConsole(2));
-		assertFalse(ComputerDAO.getInstance().deleteComputerFromConsole(0));
+		assertTrue(pcServiceInstance.deleteFromConsole(2));
+		assertFalse(pcServiceInstance.deleteFromConsole(0));
 	}
-	
-	
-
 }

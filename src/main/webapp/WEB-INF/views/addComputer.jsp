@@ -19,8 +19,6 @@
 
 <link rel="stylesheet"
 	href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<link rel="stylesheet" href="/resources/demos/style.css">
-
 </head>
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
@@ -36,7 +34,8 @@
 				<div class="col-xs-8 col-xs-offset-2 box">
 					<c:if test="${not empty errorMsg}">
 						<div class="alert alert-danger" role="alert">
-							<i class="fa fa-exclamation-triangle fa-2x"></i>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Error: </strong>
+							<i class="fa fa-exclamation-triangle fa-2x"></i>&nbsp;&nbsp;&nbsp;&nbsp;<strong>Error:
+							</strong>
 							<c:out value="${errorMsg}" />
 						</div>
 					</c:if>
@@ -52,14 +51,12 @@
 							<div class="form-group">
 								<label for="introduced">Introduced date</label> <input
 									type="text" class="form-control" id="introduced"
-									name="introduced" placeholder="Introduced date"
-									readonly="readonly">
+									name="introduced" placeholder="Introduced date">
 							</div>
 							<div class="form-group">
 								<label for="discontinued">Discontinued date</label> <input
 									type="text" class="form-control" id="discontinued"
-									name="discontinued" placeholder="Discontinued date"
-									readonly="readonly">
+									name="discontinued" placeholder="Discontinued date">
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
