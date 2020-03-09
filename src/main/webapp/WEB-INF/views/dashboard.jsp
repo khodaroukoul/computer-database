@@ -35,7 +35,14 @@
 					<c:out value="${successMsg}" />
 				</div>
 			</c:if>
-			<h1 id="homeTitle">${noOfRecords}&nbsp;Computers&nbsp;found</h1>
+			<c:if test="${not empty errorMsg}">
+				<div class="alert alert-danger" role="alert">
+					<i class="fa fa-exclamation-triangle fa-2x"></i> &nbsp;&nbsp;&nbsp;&nbsp;<strong>Success:
+					</strong>
+					<c:out value="${errorMsg}" />
+				</div>
+			</c:if>
+			<h1 id="homeTitle">${noOfPcs}&nbsp;Computers&nbsp;found</h1>
 			<div id="actions" class="form-horizontal">
 				<div class="pull-left">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
@@ -45,13 +52,13 @@
 							class="btn btn-primary" />
 					</form>
 				</div>
-				
-				<div class="pull-left" style="margin-left:30px;">
+
+				<div class="pull-left" style="margin-left: 30px;">
 					<form id="searchForm" action="#" method="GET" class="form-inline">
 						<input type="search" id="searchboxCompany" name="searchCompany"
 							class="form-control" placeholder="Search id" /> <input
-							type="submit" id="searchsubmitCompany" value="Delete company by id"
-							class="btn btn-primary" />
+							type="submit" id="searchsubmitCompany"
+							value="Delete company by id" class="btn btn-primary" />
 					</form>
 				</div>
 				<div class="pull-right">
@@ -81,14 +88,14 @@
 							</a>
 						</span></th>
 
-						<th><a href="dashboardCli?order=computer&search=${search}"
+						<th><a href="dashboardCli?order=computer&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Computer Name</a></th>
-						<th><a href="dashboardCli?order=introduced&search=${search}"
+						<th><a href="dashboardCli?order=introduced&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Introduced Date</a></th>
 						<th><a
-							href="dashboardCli?order=discontinued&search=${search}"
+							href="dashboardCli?order=discontinued&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Discontinued date</a></th>
-						<th><a href="dashboardCli?order=company&search=${search}"
+						<th><a href="dashboardCli?order=company&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Company</a></th>
 					</tr>
 				</thead>
@@ -113,53 +120,30 @@
 	<footer class="navbar-fixed-bottom">
 		<div class="container text-center">
 			<ul class="pagination">
-				<c:if test="${currentPage != 1}">
+				<li><a
+					href="dashboardCli?currentPage=${previousPage}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}"
+					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
+				</a></li>
+
+				<c:forEach begin="${pageBegin}" end="${pageEnd}" var="i">
 					<li><a
-						href="dashboardCli?page=${currentPage-1}&recordsPerPage=${recordsPerPage}&search=${search}&order=${order}"
-						aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
-					</a></li>
-				</c:if>
-
-				<%-- current page (1-based) --%>
-				<c:set var="p" value="${currentPage}" />
-
-				<%-- amount of page links to be displayed --%>
-				<c:set var="l" value="6" />
-
-				<%-- minimum link range ahead/behind --%>
-				<c:set var="r" value="${l / 2}" />
-
-				<%-- total amount of pages --%>
-				<c:set var="t" value="${noOfPages}" />
-
-				<c:set var="begin"
-					value="${((p - r) > 0 ? ((p - r) < (t - l + 1) ? (p - r) : (t - l)) : 0) + 1}" />
-
-				<c:set var="end"
-					value="${(p + r) < t ? ((p + r) > l ? (p + r) : l) : t}" />
-
-				<c:forEach begin="${begin}" end="${end}" var="i">
-					<li><a
-						href="dashboardCli?page=${i}&recordsPerPage=${recordsPerPage}&search=${search}&order=${order}">${i}</a></li>
+						href="dashboardCli?currentPage=${i}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}">${i}</a></li>
 				</c:forEach>
-
-				<c:if test="${currentPage lt noOfPages}">
-					<li><a
-						href="dashboardCli?page=${currentPage+1}&recordsPerPage=${recordsPerPage}&search=${search}&order=${order}"
-						aria-label="Next"> <span aria-hidden="true">&raquo;</span>
-					</a></li>
-				</c:if>
+				<li><a
+					href="dashboardCli?currentPage=${nextPage}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}"
+					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
+				</a></li>
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPage=10&search=${search}&order=${order}'">
+					onclick="location.href='dashboardCli?pcsPerPage=10&search=${search}&order=${order}'">
 					10</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPage=50&search=${search}&order=${order}'">
+					onclick="location.href='dashboardCli?pcsPerPage=50&search=${search}&order=${order}'">
 					50</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?recordsPerPage=100&search=${search}&order=${order}'">
+					onclick="location.href='dashboardCli?pcsPerPage=100&search=${search}&order=${order}'">
 					100</button>
 			</div>
 		</div>

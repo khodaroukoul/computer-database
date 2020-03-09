@@ -2,6 +2,7 @@ package fr.excilys.formation.cli.servlets;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
@@ -13,6 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import fr.excilys.formation.cli.dto.CompanyDTO;
 import fr.excilys.formation.cli.dto.ComputerDTO;
+import fr.excilys.formation.cli.enums.ShowMessages;
+import fr.excilys.formation.cli.exceptions.ValidationException;
+import fr.excilys.formation.cli.mapper.CompanyMapper;
 import fr.excilys.formation.cli.mapper.ComputerMapper;
 import fr.excilys.formation.cli.models.Company;
 import fr.excilys.formation.cli.models.Computer;
@@ -28,95 +32,66 @@ public class EditComputer extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	private String editComputer = "/WEB-INF/views/editComputer.jsp";
-	private static final String ERROR_MSG_COMPUTER_ID = "Invalid computer id !!! Please choose a valid computer id.";
-	private static final String ERROR_MSG_NAME = "Invalid Name !!! Please enter the computer name.";
-	private static final String ERROR_MSG_DATE_INTRODUCED = "Invalid intorduced date format !!!";
-	private static final String ERROR_MSG_DATE_DISCONTINUED = "Invalid discontinued date format !!!";
-	private static final String ERROR_MSG_DATE = "Invalid Date !!! Introduced date is not before discontinued date.";
-	private static final String ERROR_MSG_COMPANY = "Invalid company !!! Please choose a valid company.";
-	private static final String SUCCESS_MSG = "The computer is updated successfully.";
+	ComputerService pcService = ComputerService.getInstance();
+	CompanyService coService = CompanyService.getInstance();
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pcId = request.getParameter("computerId");
-		if(Validator.isNotValidId(pcId)) {
-			request.setAttribute("errorMsg",ERROR_MSG_COMPUTER_ID);
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(editComputer);
-			dispatcher.forward(request,response);
-			return;			
+		String computerId = request.getParameter("computerId");
+		if(Validator.isNotValidId(computerId) || Validator.isNotValidComputer(computerId)) {
+			request.setAttribute("errorMsg", ShowMessages.ERROR_MSG_COMPUTER_ID.getMsg());
+			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/dashboardCli");
+			dispatcher.forward(request,response);			
 		}
-		int computerId = Integer.parseInt(pcId);
-
-		if( ComputerService.getInstance().findById(computerId).isPresent()) {
-			Computer computer = ComputerService.getInstance().findById(computerId).get();
-			ComputerDTO computerDTO = ComputerMapper.getInstance().FromComputerToComputerDTO(computer);
-			List<Company> companies = CompanyService.getInstance().getList();
-			List<CompanyDTO> companiesDTO = companies.stream().map(s -> new CompanyDTO(s.getId(),s.getName()))
-					.collect(Collectors.toList());
-			request.setAttribute("computer", computerDTO);
-			request.setAttribute("companies", companiesDTO);
-			request.setAttribute("id",computerId);
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(editComputer);
-			dispatcher.forward(request,response);
-		} else {
-			response.sendRedirect(request.getContextPath()+"/dashboardCli");
-		}
+		showComputerForEdit(request, response, computerId);
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String pcId = request.getParameter("computerId");		
-		int computerId = Integer.parseInt(pcId);
-
+		String message = "";
+		String computerId = request.getParameter("computerId");
 		String computerName = request.getParameter("computerName");
-		if(Validator.isNameEmpty(computerName)) {
-			request.setAttribute("errorMsg",ERROR_MSG_NAME);
-			doGet(request, response);
-			return;
-		}
-
 		String introducedDate = request.getParameter("introduced");
-		if(Validator.isNotValidDateFormat(introducedDate)) {
-			request.setAttribute("errorMsg",ERROR_MSG_DATE_INTRODUCED);
-			doGet(request, response);
-			return;
-		}
-
 		String discontinuedDate = request.getParameter("discontinued");
-		if(Validator.isNotValidDateFormat(discontinuedDate)) {
-			request.setAttribute("errorMsg",ERROR_MSG_DATE_DISCONTINUED);
-			doGet(request, response);
-			return;
-		}
-
-		if(!introducedDate.isBlank() && !discontinuedDate.isBlank()) {
-			if(Validator.isFirstDateAfterSecond(introducedDate, discontinuedDate)) {
-				request.setAttribute("errorMsg",ERROR_MSG_DATE);
-				doGet(request, response);
-				return;
-			}
-		}
-
 		String companyId = request.getParameter("companyId");
-		if(companyId!=null) {
-			if(Validator.isNotValidId(companyId) || Validator.isNotValidCompany(companyId)) {
-				request.setAttribute("errorMsg",ERROR_MSG_COMPANY);
-				doGet(request, response);
-				return;
+		
+		try {
+			Validator.validateFields(computerName, introducedDate, discontinuedDate, companyId);
+
+			CompanyDTO companyDTO = new CompanyDTO();
+			if(!companyId.isBlank()) {	
+				companyDTO.setId(Integer.parseInt(companyId));
 			}
+			ComputerDTO computerDTO = new ComputerDTO(computerName, introducedDate, discontinuedDate, companyDTO);
+			computerDTO.setId(Integer.parseInt(computerId));
+			Computer computer = ComputerMapper.fromComputerDTOToComputer(computerDTO);
+			pcService.update(computer);
+			
+			message = ShowMessages.SUCCESS_MSG_UPDATE.getMsg();
+			response.sendRedirect(request.getContextPath()+"/dashboardCli?successMsg=" + message);
+		} catch (ValidationException vld) {
+			request.setAttribute("errorMsg", vld.getMessage());
+			doGet(request,response);
 		}
-		CompanyDTO companyDTO = (companyId.isBlank()) ? null :	
-			new CompanyDTO(Integer.parseInt(request.getParameter("companyId")));
-
-		ComputerDTO computerDTO = new ComputerDTO(computerName, introducedDate, discontinuedDate, companyDTO);
-		computerDTO.setId(computerId);
-		Computer computer = ComputerMapper.getInstance().fromComputerDTOToComputer(computerDTO);
-		ComputerService.getInstance().update(computer);
-
-		response.sendRedirect(request.getContextPath()+"/dashboardCli?successMsg="+SUCCESS_MSG);
+	}
+	
+	private void showComputerForEdit(HttpServletRequest request, HttpServletResponse response, String computerId)
+			throws ServletException, IOException {
+		Optional<Computer> optionalComputer = pcService.findById(Integer.parseInt(computerId));
+		Computer computer = optionalComputer.get();
+		ComputerDTO computerDTO = ComputerMapper.FromComputerToComputerDTO(computer);
+		List<Company> companies = coService.getList();
+		List<CompanyDTO> companiesDTO = companies.stream().map(s -> CompanyMapper.FromCompanyToCompanyDTO(s))
+				.collect(Collectors.toList());
+		request.setAttribute("computer", computerDTO);
+		request.setAttribute("companies", companiesDTO);
+		request.setAttribute("id",Integer.parseInt(computerId));
+		
+		RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(editComputer);
+		dispatcher.forward(request,response);
 	}
 }

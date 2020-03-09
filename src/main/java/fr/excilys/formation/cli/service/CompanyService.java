@@ -1,9 +1,11 @@
 package fr.excilys.formation.cli.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import fr.excilys.formation.cli.dao.CompanyDAO;
 import fr.excilys.formation.cli.models.Company;
+import fr.excilys.formation.cli.validator.Validator;
 
 public class CompanyService {
 	private static volatile CompanyService instance = null;
@@ -32,11 +34,18 @@ public class CompanyService {
 		return coDaoInstance.getListPerPage(noPage, nbLine);
 	}
 
-	public int allRecords() {
-		return coDaoInstance.allRecords();		
+	public int countAll() {
+		return coDaoInstance.countAll();		
+	}
+	
+	public Optional<Company> findById(int id) {
+		return coDaoInstance.findById(id);
 	}
 
-	public void deleteCompany(int idCompany) {
-		coDaoInstance.deleteCompany(idCompany);		
+	public void deleteCompany(String idCo) {
+		if (idCo != null && !Validator.isNotValidId(idCo) && !Validator.isNotValidCompany(idCo)) {
+			int idCompany = Integer.parseInt(idCo);
+			coDaoInstance.deleteCompany(idCompany);	
+		}	
 	}
 }

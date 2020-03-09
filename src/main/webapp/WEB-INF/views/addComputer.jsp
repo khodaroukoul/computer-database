@@ -60,9 +60,8 @@
 							</div>
 							<div class="form-group">
 								<label for="companyId">Company</label> <select
-									class="form-control" id="companyId" name="companyId">
-									<option value="" selected disabled hidden=hidden>Company
-										name</option>
+									class="form-control" id="companyId" name="companyId">									
+									<option value="" selected>No Company</option>
 									<c:forEach items="${companies}" var="company">
 										<c:if test="${company.name != selected}">
 											<option value="${company.id}">${company.name}</option>

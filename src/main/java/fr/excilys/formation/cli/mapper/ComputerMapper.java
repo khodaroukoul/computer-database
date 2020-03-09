@@ -2,6 +2,7 @@ package fr.excilys.formation.cli.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -13,66 +14,62 @@ import fr.excilys.formation.cli.models.Computer;
 
 public class ComputerMapper {
 
-	private static volatile ComputerMapper instance = null;
-
-	private ComputerMapper() {
-	}
-
-	public final static ComputerMapper getInstance() {
-		if (ComputerMapper.instance == null) {
-			synchronized(ComputerMapper.class) {
-				if (ComputerMapper.instance == null) {
-					ComputerMapper.instance = new ComputerMapper();
-				}
-			}
-		}
-		return ComputerMapper.instance;
-	}
-
-	CompanyMapper coMapperInstance = CompanyMapper.getInstance();
-
-	public Optional<Computer> getComputer(ResultSet rst) throws SQLException {
-		Company company = new Company.Builder().setName(rst.getString("coName"))
+	public static Optional<Computer> getComputer(ResultSet rst) throws SQLException {
+		Company company = new Company.Builder()
+				.setName(rst.getString("coName"))
 				.setId(rst.getInt("coId")).build();
 		Computer computer = new Computer.Builder(rst.getString("name"))
-				.setIntroduced(rst.getTimestamp("introduced")!=null?rst.getTimestamp("introduced")
-						.toLocalDateTime().toLocalDate():null)
-				.setDiscontinued(rst.getTimestamp("discontinued")!=null?rst.getTimestamp("discontinued")
-						.toLocalDateTime().toLocalDate():null)
+				.setIntroduced(dbDateToLocalDate(rst.getTimestamp("introduced")))
+				.setDiscontinued(dbDateToLocalDate(rst.getTimestamp("discontinued")))
 				.setCompany(company).build();
 		computer.setId(rst.getInt("id"));
 
 		return Optional.ofNullable(computer);
 	}
 
-	public ComputerDTO FromComputerToComputerDTO(Computer computer) {
-		CompanyDTO companyDTO = coMapperInstance.FromCompanyToCompanyDTO(computer.getCompany());
+	public static ComputerDTO FromComputerToComputerDTO(Computer computer) {
+		CompanyDTO companyDTO = CompanyMapper.FromCompanyToCompanyDTO(computer.getCompany());
 		ComputerDTO computerDTO = new ComputerDTO(computer.getName(),
-				computer.getIntroduced()!=null?computer.getIntroduced()
-						.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")):null,
-				computer.getDiscontinued()!=null?computer.getDiscontinued()
-						.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")):null,companyDTO);
+				localDateToDto(computer.getIntroduced()),
+				localDateToDto(computer.getDiscontinued()),
+				companyDTO);
 		computerDTO.setId(computer.getId());
 
 		return computerDTO;
 	}
 
-	public Computer fromComputerDTOToComputer(ComputerDTO computerDTO) {
+	public static Computer fromComputerDTOToComputer(ComputerDTO computerDTO) {
+		
 		Company company = (computerDTO.getCompany()!=null) ?
-				coMapperInstance.fromCompanyDTOToCompany(computerDTO.getCompany()) : null;
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+				CompanyMapper.fromCompanyDTOToCompany(computerDTO.getCompany()) : null;
+				
 		Computer computer = new Computer.Builder(computerDTO.getName())
-				.setIntroduced(computerDTO.getIntroduced().isBlank()?null:
-					LocalDate.parse(computerDTO.getIntroduced(),dtf))				
-				.setDiscontinued(computerDTO.getDiscontinued().isBlank()?null:
-					LocalDate.parse(computerDTO.getDiscontinued(),dtf))
-				.setCompany(company)
-				.build();
+						.setIntroduced(dtoToLocalDate(computerDTO.getIntroduced()))				
+						.setDiscontinued(dtoToLocalDate(computerDTO.getDiscontinued()))
+						.setCompany(company)
+						.build();
 
-		if(computerDTO.getId()!=0) {
+		if (computerDTO.getId()!=0) {
 			computer.setId(computerDTO.getId());
 		}		
 
 		return computer;
+	}
+	
+	public static LocalDate dtoToLocalDate(String date) {
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		return date.isBlank()?null:LocalDate.parse(date,dtf);
+	}
+	
+	public static String localDateToDto(LocalDate date) {
+		return date!=null?date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")):null;
+	}
+	
+	public static LocalDate dbDateToLocalDate(Timestamp date) {
+		return date!=null?date.toLocalDateTime().toLocalDate():null;
+	}
+	
+	public static Timestamp localDatetoDbDate(LocalDate date) {
+		return date!=null?Timestamp.valueOf(date.atStartOfDay()):null;
 	}
 }
