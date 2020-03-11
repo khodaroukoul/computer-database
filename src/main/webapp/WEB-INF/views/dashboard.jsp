@@ -21,7 +21,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboardCli"> Application -
+			<a class="navbar-brand" href="dashboard"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -37,7 +37,7 @@
 			</c:if>
 			<c:if test="${not empty errorMsg}">
 				<div class="alert alert-danger" role="alert">
-					<i class="fa fa-exclamation-triangle fa-2x"></i> &nbsp;&nbsp;&nbsp;&nbsp;<strong>Success:
+					<i class="fa fa-exclamation-triangle fa-2x"></i> &nbsp;&nbsp;&nbsp;&nbsp;<strong>Error:
 					</strong>
 					<c:out value="${errorMsg}" />
 				</div>
@@ -88,14 +88,14 @@
 							</a>
 						</span></th>
 
-						<th><a href="dashboardCli?order=computer&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
+						<th><a href="dashboard?order=computer&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Computer Name</a></th>
-						<th><a href="dashboardCli?order=introduced&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
+						<th><a href="dashboard?order=introduced&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Introduced Date</a></th>
 						<th><a
-							href="dashboardCli?order=discontinued&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
+							href="dashboard?order=discontinued&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Discontinued date</a></th>
-						<th><a href="dashboardCli?order=company&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
+						<th><a href="dashboard?order=company&search=${search}&currentPage=${previousPage}&pcsPerPage=${pcsPerPage}"
 							onclick="">Company</a></th>
 					</tr>
 				</thead>
@@ -121,29 +121,29 @@
 		<div class="container text-center">
 			<ul class="pagination">
 				<li><a
-					href="dashboardCli?currentPage=${previousPage}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}"
+					href="dashboard?currentPage=${previousPage}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}"
 					aria-label="Previous"> <span aria-hidden="true">&laquo;</span>
 				</a></li>
 
 				<c:forEach begin="${pageBegin}" end="${pageEnd}" var="i">
 					<li><a
-						href="dashboardCli?currentPage=${i}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}">${i}</a></li>
+						href="dashboard?currentPage=${i}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}">${i}</a></li>
 				</c:forEach>
 				<li><a
-					href="dashboardCli?currentPage=${nextPage}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}"
+					href="dashboard?currentPage=${nextPage}&pcsPerPage=${pcsPerPage}&search=${search}&order=${order}"
 					aria-label="Next"> <span aria-hidden="true">&raquo;</span>
 				</a></li>
 			</ul>
 
 			<div class="btn-group btn-group-sm pull-right" role="group">
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?pcsPerPage=10&search=${search}&order=${order}'">
+					onclick="location.href='dashboard?pcsPerPage=10&search=${search}&order=${order}'">
 					10</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?pcsPerPage=50&search=${search}&order=${order}'">
+					onclick="location.href='dashboard?pcsPerPage=50&search=${search}&order=${order}'">
 					50</button>
 				<button type="button" class="btn btn-default"
-					onclick="location.href='dashboardCli?pcsPerPage=100&search=${search}&order=${order}'">
+					onclick="location.href='dashboard?pcsPerPage=100&search=${search}&order=${order}'">
 					100</button>
 			</div>
 		</div>

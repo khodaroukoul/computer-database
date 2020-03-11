@@ -23,7 +23,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboardCli"> Application -
+			<a class="navbar-brand" href="dashboard"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -63,9 +63,7 @@
 									class="form-control" id="companyId" name="companyId">									
 									<option value="" selected>No Company</option>
 									<c:forEach items="${companies}" var="company">
-										<c:if test="${company.name != selected}">
-											<option value="${company.id}">${company.name}</option>
-										</c:if>
+										<option value="${company.id}">${company.name}</option>
 									</c:forEach>
 								</select>
 							</div>
@@ -73,7 +71,7 @@
 						<div class="actions pull-right">
 							<input type="submit" value="Add" class="btn btn-primary">
 
-							<a href="dashboardCli" class="btn btn-default">Cancel</a>
+							<a href="dashboard" class="btn btn-default">Cancel</a>
 						</div>
 					</form>
 				</div>

@@ -23,7 +23,7 @@
 <body>
 	<header class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="dashboardCli"> Application -
+			<a class="navbar-brand" href="dashboard"> Application -
 				Computer Database </a>
 		</div>
 	</header>
@@ -85,7 +85,7 @@
 						</fieldset>
 						<div class="actions pull-right">
 							<input type="submit" value="Edit" class="btn btn-primary">
-							<a href="dashboardCli" class="btn btn-default">Cancel</a>
+							<a href="dashboard" class="btn btn-default">Cancel</a>
 						</div>
 					</form>
 				</div>
