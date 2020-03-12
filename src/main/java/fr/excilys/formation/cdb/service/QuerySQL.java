@@ -15,7 +15,7 @@ public class QuerySQL {
 			case "discontinued":
 				orderBy = "cp.discontinued";
 				break;
-			case "co.name":
+			case "company":
 				orderBy = "co.name";
 				break;
 			default:

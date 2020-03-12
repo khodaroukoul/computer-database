@@ -1,10 +1,8 @@
 package fr.excilys.formation.cdb.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.excilys.formation.cdb.dao.ComputerDAO;
@@ -17,7 +15,6 @@ public class ComputerService {
 
 	ComputerDAO pcDao;
 
-	@Autowired
 	public ComputerService(ComputerDAO pcDao) {
 		this.pcDao = pcDao;
 	}
@@ -38,7 +35,7 @@ public class ComputerService {
 		return pcDao.deleteFromConsole(id);
 	}
 
-	public Optional<Computer> findById(int id) {
+	public List<Computer> findById(int id) {
 		return pcDao.findById(id);
 	}
 
@@ -54,8 +51,8 @@ public class ComputerService {
 		return pcDao.getListPerPage(noPage, nbLine, orderBy);
 	}
 
-	public int FoundByName(String name){
-		return pcDao.FoundByName(name);
+	public int foundByName(String name){
+		return pcDao.foundByName(name);
 	}
 
 	public int countAll() {
@@ -65,7 +62,7 @@ public class ComputerService {
 	public int noOfComputers(String searchPcByName) {
 		int noOfComputers;
 		if(searchPcByName!=null && !searchPcByName.isBlank()) {
-			noOfComputers = FoundByName(searchPcByName);
+			noOfComputers = foundByName(searchPcByName);
 		} else {
 			noOfComputers = countAll();
 		}
@@ -77,15 +74,17 @@ public class ComputerService {
 		List<Computer> computers;
 		List<ComputerDTO> computersDTO;
 		String orderBy = QuerySQL.sortSQL(order);
+		
 		if(searchPcByName!=null && !searchPcByName.isBlank()) {
 			computers = findByName(searchPcByName,currentPage,computersPerPage,orderBy);
-			computersDTO = computers.stream().map(s -> ComputerMapper.FromComputerToComputerDTO(s)).
+			computersDTO = computers.stream().map(ComputerMapper::FromComputerToComputerDTO).
 					collect(Collectors.toList());
 		} else {
 			computers = getListPerPage(currentPage,computersPerPage,orderBy);
-			computersDTO = computers.stream().map(s -> ComputerMapper.FromComputerToComputerDTO(s)).
+			computersDTO = computers.stream().map(ComputerMapper::FromComputerToComputerDTO).
 					collect(Collectors.toList());
 		}
+		
 		return computersDTO;
 	}
 }

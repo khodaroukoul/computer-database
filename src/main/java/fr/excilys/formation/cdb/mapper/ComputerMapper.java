@@ -5,28 +5,15 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
+import org.springframework.jdbc.core.RowMapper;
 
 import fr.excilys.formation.cdb.dto.CompanyDTO;
 import fr.excilys.formation.cdb.dto.ComputerDTO;
 import fr.excilys.formation.cdb.models.Company;
 import fr.excilys.formation.cdb.models.Computer;
 
-public class ComputerMapper {
-
-	public static Optional<Computer> getComputer(ResultSet rst) throws SQLException {
-		Company company = new Company.Builder()
-				.setName(rst.getString("coName"))
-				.setId(rst.getInt("coId")).build();
-		Computer computer = new Computer.Builder(rst.getString("name"))
-				.setIntroduced(dbDateToLocalDate(rst.getTimestamp("introduced")))
-				.setDiscontinued(dbDateToLocalDate(rst.getTimestamp("discontinued")))
-				.setCompany(company).build();
-		computer.setId(rst.getInt("id"));
-
-		return Optional.ofNullable(computer);
-	}
-
+public class ComputerMapper implements RowMapper<Computer> {
+	
 	public static ComputerDTO FromComputerToComputerDTO(Computer computer) {
 		CompanyDTO companyDTO = CompanyMapper.FromCompanyToCompanyDTO(computer.getCompany());
 		ComputerDTO computerDTO = new ComputerDTO(computer.getName(),
@@ -71,5 +58,18 @@ public class ComputerMapper {
 	
 	public static Timestamp localDatetoDbDate(LocalDate date) {
 		return date!=null?Timestamp.valueOf(date.atStartOfDay()):null;
+	}
+
+	@Override
+	public Computer mapRow(ResultSet rst, int rowNum) throws SQLException {
+		Company company = new Company.Builder()
+				.setName(rst.getString("coName"))
+				.setId(rst.getInt("coId")).build();
+		Computer computer = new Computer.Builder(rst.getString("name"))
+				.setIntroduced(dbDateToLocalDate(rst.getTimestamp("introduced")))
+				.setDiscontinued(dbDateToLocalDate(rst.getTimestamp("discontinued")))
+				.setCompany(company).build();
+		computer.setId(rst.getInt("id"));
+		return computer;
 	}
 }

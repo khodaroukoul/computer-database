@@ -1,5 +1,6 @@
 package fr.excilys.formation.cdb.daoTest;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -11,15 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fr.excilys.formation.cdb.configuration.SpringConfig;
 import fr.excilys.formation.cdb.service.ComputerService;
-import fr.excilys.formation.cdb.spring.config.SpringContextConfig;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringContextConfig.class})
+@ContextConfiguration(classes = {SpringConfig.class})
 public class ComputerDAOTest {
 	
 	@Autowired
-	ComputerService pcServiceInstance;
+	ComputerService pcService;
 	
 	@Before
 	public void setUp() {
@@ -31,13 +32,18 @@ public class ComputerDAOTest {
 	
 	@Test
 	public void testFindComputer() {
-		assertTrue(pcServiceInstance.findById(5).isPresent());
-		assertFalse(pcServiceInstance.findById(2).isPresent());
+		assertFalse(pcService.findById(5).isEmpty());
+		assertTrue(pcService.findById(0).isEmpty());
 	}
 
 	@Test
 	public void testDeleteComputer() {
-		assertTrue(pcServiceInstance.deleteFromConsole(2));
-		assertFalse(pcServiceInstance.deleteFromConsole(0));
+		assertTrue(pcService.deleteFromConsole(2));
+		assertFalse(pcService.deleteFromConsole(0));
+	}
+	
+	@Test
+	public void testcountComputer() {
+		assertEquals(50,pcService.countAll());
 	}
 }

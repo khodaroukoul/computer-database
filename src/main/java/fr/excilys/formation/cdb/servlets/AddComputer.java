@@ -37,9 +37,9 @@ public class AddComputer extends HttpServlet {
 	private String addComputer = "/WEB-INF/views/addComputer.jsp";
 	
 	@Autowired
-	ComputerService pcService;
+	private ComputerService pcService;
 	@Autowired
-	CompanyService coService;
+	private CompanyService coService;
 	
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);

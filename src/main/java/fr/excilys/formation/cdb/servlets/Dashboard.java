@@ -22,7 +22,6 @@ import fr.excilys.formation.cdb.service.CompanyService;
 import fr.excilys.formation.cdb.service.ComputerService;
 import fr.excilys.formation.cdb.service.PageCreator;
 
-
 @WebServlet("/dashboard")
 @Controller
 public class Dashboard extends HttpServlet {

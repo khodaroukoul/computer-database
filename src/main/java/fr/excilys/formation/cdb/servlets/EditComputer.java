@@ -2,7 +2,6 @@ package fr.excilys.formation.cdb.servlets;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.RequestDispatcher;
@@ -90,9 +89,8 @@ public class EditComputer extends HttpServlet {
 
 	private void showComputerForEdit(HttpServletRequest request, HttpServletResponse response, String computerId)
 			throws ServletException, IOException {
-		Optional<Computer> optionalComputer = pcService.findById(Integer.parseInt(computerId));
-		Computer computer = optionalComputer.get();
-		ComputerDTO computerDTO = ComputerMapper.FromComputerToComputerDTO(computer);
+		List<Computer> computer = pcService.findById(Integer.parseInt(computerId));
+		ComputerDTO computerDTO = ComputerMapper.FromComputerToComputerDTO(computer.get(0));
 		List<Company> companies = coService.getList();
 		List<CompanyDTO> companiesDTO = companies.stream().map(CompanyMapper::FromCompanyToCompanyDTO)
 				.collect(Collectors.toList());

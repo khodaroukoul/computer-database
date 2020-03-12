@@ -2,18 +2,12 @@ package fr.excilys.formation.cdb.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Optional;
+import org.springframework.jdbc.core.RowMapper;
 
 import fr.excilys.formation.cdb.dto.CompanyDTO;
 import fr.excilys.formation.cdb.models.Company;
 
-public class CompanyMapper {
-
-	public static Optional<Company> getCompany(ResultSet res) throws SQLException {
-		Company company = new Company.Builder().setName(res.getString("name"))
-				.setId(res.getInt("id")).build();
-		return Optional.ofNullable(company);
-	}
+public class CompanyMapper implements RowMapper<Company>{
 
 	public static CompanyDTO FromCompanyToCompanyDTO(Company company) {
 		CompanyDTO companyDTO = new CompanyDTO();
@@ -24,6 +18,14 @@ public class CompanyMapper {
 
 	public static Company fromCompanyDTOToCompany(CompanyDTO companyDTO) {
 		Company company = new Company.Builder().setId(companyDTO.getId()).build();
+		return company;
+	}
+
+	@Override
+	public Company mapRow(ResultSet rst, int rowNum) throws SQLException {
+		Company company = new Company.Builder().build();
+		company.setId(rst.getInt("id"));
+		company.setName(rst.getString("name"));
 		return company;
 	}
 }
