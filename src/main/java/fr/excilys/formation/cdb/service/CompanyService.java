@@ -4,7 +4,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import fr.excilys.formation.cdb.dao.CompanyDAO;
-import fr.excilys.formation.cdb.models.Company;
+import fr.excilys.formation.cdb.model.Company;
 import fr.excilys.formation.cdb.validator.Validator;
 
 @Service

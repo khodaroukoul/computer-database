@@ -9,10 +9,23 @@ import org.springframework.jdbc.core.RowMapper;
 
 import fr.excilys.formation.cdb.dto.CompanyDTO;
 import fr.excilys.formation.cdb.dto.ComputerDTO;
-import fr.excilys.formation.cdb.models.Company;
-import fr.excilys.formation.cdb.models.Computer;
+import fr.excilys.formation.cdb.model.Company;
+import fr.excilys.formation.cdb.model.Computer;
 
 public class ComputerMapper implements RowMapper<Computer> {
+
+	@Override
+	public Computer mapRow(ResultSet rst, int rowNum) throws SQLException {
+		Company company = new Company.Builder()
+				.setName(rst.getString("coName"))
+				.setId(rst.getInt("coId")).build();
+		Computer computer = new Computer.Builder(rst.getString("name"))
+				.setIntroduced(dbDateToLocalDate(rst.getTimestamp("introduced")))
+				.setDiscontinued(dbDateToLocalDate(rst.getTimestamp("discontinued")))
+				.setCompany(company).build();
+		computer.setId(rst.getInt("id"));
+		return computer;
+	}
 	
 	public static ComputerDTO FromComputerToComputerDTO(Computer computer) {
 		CompanyDTO companyDTO = CompanyMapper.FromCompanyToCompanyDTO(computer.getCompany());
@@ -58,18 +71,5 @@ public class ComputerMapper implements RowMapper<Computer> {
 	
 	public static Timestamp localDatetoDbDate(LocalDate date) {
 		return date!=null?Timestamp.valueOf(date.atStartOfDay()):null;
-	}
-
-	@Override
-	public Computer mapRow(ResultSet rst, int rowNum) throws SQLException {
-		Company company = new Company.Builder()
-				.setName(rst.getString("coName"))
-				.setId(rst.getInt("coId")).build();
-		Computer computer = new Computer.Builder(rst.getString("name"))
-				.setIntroduced(dbDateToLocalDate(rst.getTimestamp("introduced")))
-				.setDiscontinued(dbDateToLocalDate(rst.getTimestamp("discontinued")))
-				.setCompany(company).build();
-		computer.setId(rst.getInt("id"));
-		return computer;
 	}
 }

@@ -1,6 +1,6 @@
 package fr.excilys.formation.cdb.service;
 
-import fr.excilys.formation.cdb.models.Pagination;
+import fr.excilys.formation.cdb.model.Pagination;
 
 public class PageCreator {
 

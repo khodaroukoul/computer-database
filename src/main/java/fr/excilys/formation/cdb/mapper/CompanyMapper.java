@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 import fr.excilys.formation.cdb.dto.CompanyDTO;
-import fr.excilys.formation.cdb.models.Company;
+import fr.excilys.formation.cdb.model.Company;
 
 public class CompanyMapper implements RowMapper<Company>{
 

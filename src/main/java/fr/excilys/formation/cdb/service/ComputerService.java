@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import fr.excilys.formation.cdb.dao.ComputerDAO;
 import fr.excilys.formation.cdb.dto.ComputerDTO;
 import fr.excilys.formation.cdb.mapper.ComputerMapper;
-import fr.excilys.formation.cdb.models.Computer;
+import fr.excilys.formation.cdb.model.Computer;
 
 @Service
 public class ComputerService {

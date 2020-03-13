@@ -38,7 +38,7 @@
 							<c:out value="${errorMsg}" />
 						</div>
 					</c:if>
-					<div class="label label-default pull-right">id: ${id}</div>
+					<div class="label label-default pull-right">id: ${computer.id}</div>
 					<h1>Edit Computer</h1>
 
 					<form action="editComputer" method="POST">

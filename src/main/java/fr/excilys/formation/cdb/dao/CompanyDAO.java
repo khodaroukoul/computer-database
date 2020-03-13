@@ -8,9 +8,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import fr.excilys.formation.cdb.enums.SQLCommands;
 import fr.excilys.formation.cdb.mapper.CompanyMapper;
-import fr.excilys.formation.cdb.models.Company;
+import fr.excilys.formation.cdb.model.Company;
 
 @Repository
 public final class CompanyDAO{

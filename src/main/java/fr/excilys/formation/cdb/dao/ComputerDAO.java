@@ -12,9 +12,8 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import fr.excilys.formation.cdb.enums.SQLCommands;
 import fr.excilys.formation.cdb.mapper.ComputerMapper;
-import fr.excilys.formation.cdb.models.Computer;
+import fr.excilys.formation.cdb.model.Computer;
 
 @Repository
 public final class ComputerDAO {
@@ -119,7 +118,7 @@ public final class ComputerDAO {
 	}
 
 	private void addValueCompanyId(Computer computer, MapSqlParameterSource mapParam) {
-		if (computer.getCompany() != null) {
+		if (computer.getCompany().getId() > 0) {
 			mapParam.addValue("companyId", computer.getCompany().getId());
 		} else {
 			mapParam.addValue("companyId", null);

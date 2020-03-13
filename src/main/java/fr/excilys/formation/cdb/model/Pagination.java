@@ -1,4 +1,4 @@
-package fr.excilys.formation.cdb.models;
+package fr.excilys.formation.cdb.model;
 
 public class Pagination {
 

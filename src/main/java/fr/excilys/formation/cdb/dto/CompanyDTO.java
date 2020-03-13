@@ -39,7 +39,7 @@ public class CompanyDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "CompanyDTO [name=" + name + "]";
+		return "CompanyDTO [id=" + id + ", name=" + name + "]";
 	}
 
 }

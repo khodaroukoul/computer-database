@@ -1,4 +1,4 @@
-package fr.excilys.formation.cdb.enums;
+package fr.excilys.formation.cdb.dao;
 
 
 public enum SQLCommands {
@@ -33,13 +33,13 @@ public enum SQLCommands {
 	ORDER_BY(" ORDER BY  ");
 
 	private String sqlCommands;
-	 
+
 	SQLCommands(String sqlCommands) {
-        this.sqlCommands = sqlCommands;
-    }
- 
-    public String getSqlCommands() {
-        return sqlCommands;
-    }
+		this.sqlCommands = sqlCommands;
+	}
+
+	public String getSqlCommands() {
+		return sqlCommands;
+	}
 
 }

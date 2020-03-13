@@ -7,22 +7,22 @@ import java.time.format.DateTimeParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
-import fr.excilys.formation.cdb.enums.ShowMessages;
 import fr.excilys.formation.cdb.service.CompanyService;
 import fr.excilys.formation.cdb.service.ComputerService;
+import fr.excilys.formation.cdb.controller.ShowMessages;
 import fr.excilys.formation.cdb.exceptions.ValidationException;
 
 @Component
 public class Validator {
-	
+
 	static ComputerService pcService;
 	static CompanyService coService;
-	
+
 	public Validator(ComputerService pcService, CompanyService coService) {
 		Validator.pcService = pcService;
 		Validator.coService = coService;		
 	}
-	
+
 	public static void validateComputerId(String computerId) throws ValidationException {
 		if(Validator.isNotValidId(computerId) || Validator.isNotValidComputer(computerId)) {
 			String message = ShowMessages.ERROR_MSG_COMPUTER_ID.getMsg();
@@ -54,7 +54,7 @@ public class Validator {
 				throw new ValidationException(message);
 			}
 		}
-		
+
 		if(!companyId.isBlank()) {
 			if(isNotValidId(companyId) || isNotValidCompany(companyId)) {
 				message = ShowMessages.ERROR_MSG_COMPANY.getMsg();
@@ -65,14 +65,13 @@ public class Validator {
 
 	public static boolean isNotValidDateFormat(String strDate) {
 		boolean isNotValidDate = false;
-		if (strDate.isBlank())
-		{
+		if (strDate==null || strDate.isBlank()) {
 			return isNotValidDate;
 		} else {
 			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 			try {
 				LocalDate.parse(strDate,dtf);	
-			}catch(DateTimeParseException e){
+			} catch(DateTimeParseException e){
 				isNotValidDate = true;
 				return isNotValidDate;
 			}
