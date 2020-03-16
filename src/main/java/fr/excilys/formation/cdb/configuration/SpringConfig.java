@@ -49,7 +49,7 @@ public class SpringConfig  implements WebApplicationInitializer {
 		ctx.register(WebConfig.class, SpringConfig.class);
 		ctx.setServletContext(container);
 		DispatcherServlet dv = new DispatcherServlet(ctx);
-		ServletRegistration.Dynamic servlet = container.addServlet("dynamicServlet", dv);
+		ServletRegistration.Dynamic servlet = container.addServlet("dashboard", dv);
 		servlet.setLoadOnStartup(1);
 		servlet.addMapping("/");
 	}	

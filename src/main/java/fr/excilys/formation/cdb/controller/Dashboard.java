@@ -32,10 +32,10 @@ public class Dashboard {
 			@RequestParam(required = false, value = "order") String order,
 			@RequestParam(required = false, value = "successMsg") String successMsg,
 			@RequestParam(required = false, value = "errorMsg") String errorMsg,
-			@RequestParam(required = false, value = "searchPcByName") String searchPcByName,
+			@RequestParam(required = false, value = "search") String searchPcByName,
 			@RequestParam(required = false, value = "searchCompany") String searchCompany) {
 
-		ModelAndView modelAndView = new ModelAndView();
+		ModelAndView modelAndView = new ModelAndView(dashboard);
 
 		if(successMsg!=null && !successMsg.isBlank()) {
 			modelAndView.addObject("successMsg", successMsg);
@@ -58,19 +58,18 @@ public class Dashboard {
 
 		setDashboardAttribute(order, searchPcByName, modelAndView, currentPage,
 				computersPerPage, computersDTO,	noOfComputers, myPage);
-		modelAndView.setViewName(dashboard);
+		
 		return modelAndView;
 	}
 
 	@PostMapping(value="/deleteComputer")
 	public ModelAndView deleteComputer(@RequestParam(value = "selection") String deletePcList) {
 
-		ModelAndView modelAndView = new ModelAndView();
+		ModelAndView modelAndView = new ModelAndView("redirect:/dashboard");
 		if(!deletePcList.isBlank()) {
 			pcService.delete(deletePcList);
 			modelAndView.addObject("successMsg", ShowMessages.SUCCESS_MSG_DELETE.getMsg());
 		}
-		modelAndView.setViewName("redirect:/dashboard");
 
 		return modelAndView;
 	}

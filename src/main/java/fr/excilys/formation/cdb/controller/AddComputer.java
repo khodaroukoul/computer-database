@@ -34,7 +34,7 @@ public class AddComputer {
 
 	@GetMapping(value="/addComputer")
 	public ModelAndView companyList(@RequestParam(required = false, value = "errorMsg") String errorMsg) {
-		ModelAndView modelAndView = new ModelAndView();
+		ModelAndView modelAndView = new ModelAndView(addComputer);
 		if(errorMsg!=null && !errorMsg.isBlank()) {
 			modelAndView.addObject("errorMsg", errorMsg);
 		}
@@ -44,7 +44,6 @@ public class AddComputer {
 				.collect(Collectors.toList());
 
 		modelAndView.addObject("companies", companiesDTO);
-		modelAndView.setViewName(addComputer);
 
 		return modelAndView;			
 	}
