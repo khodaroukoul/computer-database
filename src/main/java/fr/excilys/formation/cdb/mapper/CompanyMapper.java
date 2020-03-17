@@ -13,11 +13,13 @@ public class CompanyMapper implements RowMapper<Company>{
 		CompanyDTO companyDTO = new CompanyDTO();
 		companyDTO.setId(company.getId());
 		companyDTO.setName(company.getName());
+
 		return companyDTO;
 	}
 
 	public static Company fromCompanyDTOToCompany(CompanyDTO companyDTO) {
 		Company company = new Company.Builder().setId(companyDTO.getId()).build();
+
 		return company;
 	}
 
@@ -26,6 +28,7 @@ public class CompanyMapper implements RowMapper<Company>{
 		Company company = new Company.Builder().build();
 		company.setId(rst.getInt("id"));
 		company.setName(rst.getString("name"));
+
 		return company;
 	}
 }

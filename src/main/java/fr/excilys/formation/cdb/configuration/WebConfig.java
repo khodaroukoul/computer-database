@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -34,9 +31,15 @@ public class WebConfig implements WebMvcConfigurer {
 		return viewResolver;
 	}
 
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry
+				.addResourceHandler("/resources/**")
+				.addResourceLocations("/resources/");
+	}
+
 	@Bean("messageSource")
 	public MessageSource messageSource() {
-		ReloadableResourceBundleMessageSource messageSource=new ReloadableResourceBundleMessageSource();
+		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:locale/messages");
 		messageSource.setDefaultEncoding("UTF-8");
 		messageSource.setUseCodeAsDefaultMessage(true);
@@ -56,4 +59,3 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addInterceptor(localeChangeInterceptor);
 	}
 }
-

@@ -30,14 +30,16 @@ public class AddComputer {
 	public AddComputer(ComputerService pcService, CompanyService coService) {
 		this.pcService = pcService;
 		this.coService = coService;
-	}	
+	}
 
 	@GetMapping(value="/addComputer")
 	public ModelAndView companyList(@RequestParam(required = false, value = "errorMsg") String errorMsg) {
 		ModelAndView modelAndView = new ModelAndView(addComputer);
-		if(errorMsg!=null && !errorMsg.isBlank()) {
-			modelAndView.addObject("errorMsg", errorMsg);
-		}
+
+		Dashboard.setMessage("errorMsg", errorMsg, modelAndView);
+//		if(errorMsg!=null && !errorMsg.isBlank()) {
+//			modelAndView.addObject("errorMsg", errorMsg);
+//		}
 		
 		List<Company> companies = coService.getList();
 		List<CompanyDTO> companiesDTO = companies.stream().map(CompanyMapper::FromCompanyToCompanyDTO)

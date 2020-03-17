@@ -37,9 +37,10 @@ public class EditComputer {
 			@RequestParam(required = false, value = "errorMsg") String errorMsg) {
 		ModelAndView modelAndView = new ModelAndView();
 
-		if(errorMsg!=null && !errorMsg.isBlank()) {
-			modelAndView.addObject("errorMsg", errorMsg);
-		}
+		Dashboard.setMessage("errorMsg", errorMsg, modelAndView);
+//		if(errorMsg!=null && !errorMsg.isBlank()) {
+//			modelAndView.addObject("errorMsg", errorMsg);
+//		}
 
 		try {
 			Validator.validateComputerId(computerId);

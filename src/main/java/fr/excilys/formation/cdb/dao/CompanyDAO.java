@@ -12,7 +12,7 @@ import fr.excilys.formation.cdb.mapper.CompanyMapper;
 import fr.excilys.formation.cdb.model.Company;
 
 @Repository
-public final class CompanyDAO{
+public class CompanyDAO{
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	CompanyMapper companyMapper = new CompanyMapper(); 

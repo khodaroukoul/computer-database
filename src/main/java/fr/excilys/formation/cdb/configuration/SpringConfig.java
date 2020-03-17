@@ -22,17 +22,16 @@ import org.springframework.web.servlet.DispatcherServlet;
 		"fr.excilys.formation.cdb.dao","fr.excilys.formation.cdb.service",
 		"fr.excilys.formation.cdb.validator"})
 public class SpringConfig  implements WebApplicationInitializer {
-	
-	@Autowired
+
 	Environment environment;
 
 	private final String DRIVER = "dataSource.driverClassName";
 	private final String URL = "dataSource.jdbcUrl";
 	private final String USER = "dataSource.username";
 	private final String PASSWORD = "dataSource.password";
-	
+
 	@Bean
-	DataSource dataSource() {
+	DataSource dataSource(Environment environment) {
 		DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
 
 		driverManagerDataSource.setDriverClassName(environment.getRequiredProperty(DRIVER));
