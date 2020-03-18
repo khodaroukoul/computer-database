@@ -15,27 +15,21 @@ import fr.excilys.formation.cdb.model.Company;
 public class CompanyDAO{
 
 	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-	CompanyMapper companyMapper = new CompanyMapper(); 
+	CompanyMapper companyMapper;
 
-	public CompanyDAO(DataSource dataSource) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);		
+	public CompanyDAO(DataSource dataSource, CompanyMapper companyMapper) {
+		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.companyMapper = companyMapper;
 	}
 
 	public List<Company> getList() {
-
-		List<Company> companies = namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPANIES.getSqlCommands(), 
-				companyMapper);
-
-		return companies;
+		return namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPANIES.getSqlCommands(), companyMapper);
 	}
 
 	public List<Company> findById(int companyId) { 
 		MapSqlParameterSource mapParam = new MapSqlParameterSource().addValue("companyId", companyId);
 
-		List<Company> company = namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPANY.getSqlCommands(), 
-				mapParam, companyMapper);
-
-		return company;
+		return namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPANY.getSqlCommands(), mapParam, companyMapper);
 	}
 
 	@Transactional

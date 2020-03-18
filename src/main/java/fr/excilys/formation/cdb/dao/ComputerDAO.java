@@ -19,10 +19,11 @@ import fr.excilys.formation.cdb.model.Computer;
 public class ComputerDAO {
 
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
-    ComputerMapper computerMapper = new ComputerMapper();
+    ComputerMapper computerMapper;
 
-    public ComputerDAO(DataSource dataSource) {
+    public ComputerDAO(DataSource dataSource, ComputerMapper computerMapper) {
         this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+        this.computerMapper = computerMapper;
     }
 
     public void create(Computer computer) {
@@ -73,10 +74,7 @@ public class ComputerDAO {
     public List<Computer> findById(int computerId) {
         MapSqlParameterSource mapParam = new MapSqlParameterSource().addValue("computerId", computerId);
 
-        List<Computer> computer = namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPUTER.getSqlCommands(),
-                mapParam, computerMapper);
-
-        return computer;
+        return namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPUTER.getSqlCommands(), mapParam, computerMapper);
     }
 
     public List<Computer> findByName(String name, int noPage, int nbLine, String orderBy) {
@@ -89,15 +87,11 @@ public class ComputerDAO {
         String sqlCommand = SQLCommands.FIND_COMPUTERS_BY_NAME.getSqlCommands() + SQLCommands.ORDER_BY.getSqlCommands()
                 + orderBy + SQLCommands.FIND_PAGE.getSqlCommands();
 
-        List<Computer> computers = namedParameterJdbcTemplate.query(sqlCommand, mapParam, computerMapper);
-
-        return computers;
+        return namedParameterJdbcTemplate.query(sqlCommand, mapParam, computerMapper);
     }
 
     public List<Computer> getList() {
-        List<Computer> computers = namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPUTERS.getSqlCommands(),
-                computerMapper);
-        return computers;
+        return namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPUTERS.getSqlCommands(), computerMapper);
     }
 
     public List<Computer> getListPerPage(int noPage, int nbLine, String orderBy) {
@@ -107,26 +101,22 @@ public class ComputerDAO {
         String sqlCommand = SQLCommands.FIND_COMPUTERS.getSqlCommands() + SQLCommands.ORDER_BY.getSqlCommands()
                 + orderBy + SQLCommands.FIND_PAGE.getSqlCommands();
 
-        List<Computer> computers = namedParameterJdbcTemplate.query(sqlCommand, mapParam, computerMapper);
-
-        return computers;
+        return namedParameterJdbcTemplate.query(sqlCommand, mapParam, computerMapper);
     }
 
-    public int countAll() {
+    public Integer countAll() {
         MapSqlParameterSource mapParam = new MapSqlParameterSource();
 
         return namedParameterJdbcTemplate.queryForObject(SQLCommands.COUNT_COMPUTERS.getSqlCommands(), mapParam,
                 Integer.class);
     }
 
-    public int foundByName(String name) {
+    public Integer foundByName(String name) {
         MapSqlParameterSource mapParam = new MapSqlParameterSource()
                 .addValue("computerName", '%' + name + '%');
 
-        int noComputers = namedParameterJdbcTemplate
-                .queryForObject(SQLCommands.COUNT_COMPUTERS_FOUND_BY_NAME.getSqlCommands(), mapParam, Integer.class);
-
-        return noComputers;
+        return namedParameterJdbcTemplate.queryForObject(SQLCommands.COUNT_COMPUTERS_FOUND_BY_NAME.getSqlCommands(),
+                mapParam, Integer.class);
     }
 
     private void addValueCompanyId(Computer computer, MapSqlParameterSource mapParam) {

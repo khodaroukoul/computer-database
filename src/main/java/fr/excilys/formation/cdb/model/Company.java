@@ -1,55 +1,55 @@
 package fr.excilys.formation.cdb.model;
 
 public class Company {
-	private int id;
-	private String name;
+    private int id;
+    private String name;
 
-	private Company(Builder builder) {
-		this.id = builder.id;
-		this.name = builder.name;
-	}
+    private Company(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+    }
 
-	public int getId() {
-		return id;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	@Override
-	public String toString() {
-		return "Company [name=" + name + "]";
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public static class Builder {
-		private int id;
-		private String name;
+    @Override
+    public String toString() {
+        return "Company [name=" + name + "]";
+    }
 
-		public Builder() {
-		}
+    public static class Builder {
+        private int id;
+        private String name;
 
-		public Builder setId(int id) {
-			this.id = id;
-			return this;
-		}
+        public Builder() {
+        }
 
-		public Builder setName(String name) {
-			this.name = name;
-			return this;
-		}
+        public Builder setId(int id) {
+            this.id = id;
+            return this;
+        }
 
-		public Company build() {
-			Company company =  new Company(this);
-			return company;
-		}
-	}
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Company build() {
+            Company company = new Company(this);
+            return company;
+        }
+    }
 }

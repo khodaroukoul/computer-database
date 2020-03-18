@@ -20,7 +20,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 @PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = {"fr.excilys.formation.cdb.controller",
 		"fr.excilys.formation.cdb.dao","fr.excilys.formation.cdb.service",
-		"fr.excilys.formation.cdb.validator"})
+		"fr.excilys.formation.cdb.validator","fr.excilys.formation.cdb.mapper"})
 public class SpringConfig  implements WebApplicationInitializer {
 
 	Environment environment;
@@ -51,5 +51,5 @@ public class SpringConfig  implements WebApplicationInitializer {
 		ServletRegistration.Dynamic servlet = container.addServlet("dashboard", dv);
 		servlet.setLoadOnStartup(1);
 		servlet.addMapping("/");
-	}	
+	}
 }

@@ -20,7 +20,7 @@ import fr.excilys.formation.cdb.service.ComputerService;
 public class ComputerDAOTest {
 	
 	@Autowired
-	ComputerService pcService;
+	ComputerService computerService;
 	
 	@Before
 	public void setUp() {
@@ -32,18 +32,18 @@ public class ComputerDAOTest {
 	
 	@Test
 	public void testFindComputer() {
-		assertFalse(pcService.findById(5).isEmpty());
-		assertTrue(pcService.findById(0).isEmpty());
+		assertFalse(computerService.findById(5).isEmpty());
+		assertTrue(computerService.findById(0).isEmpty());
 	}
 
 	@Test
 	public void testDeleteComputer() {
-		assertTrue(pcService.deleteFromConsole(2));
-		assertFalse(pcService.deleteFromConsole(0));
+		assertTrue(computerService.deleteFromConsole(2));
+		assertFalse(computerService.deleteFromConsole(0));
 	}
 	
 	@Test
 	public void testcountComputer() {
-		assertEquals(50,pcService.countAll());
+		assertEquals(50,computerService.countAll());
 	}
 }

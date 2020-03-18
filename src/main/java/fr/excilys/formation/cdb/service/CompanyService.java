@@ -1,6 +1,7 @@
 package fr.excilys.formation.cdb.service;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import fr.excilys.formation.cdb.dao.CompanyDAO;
@@ -10,28 +11,27 @@ import fr.excilys.formation.cdb.validator.Validator;
 @Service
 public class CompanyService {
 
-	CompanyDAO coDao; 
+    CompanyDAO companyDao;
 
-	public CompanyService(CompanyDAO coDao) {
-		this.coDao = coDao;
-	}
+    public CompanyService(CompanyDAO companyDao) {
+        this.companyDao = companyDao;
+    }
 
-	public List<Company> getList(){
-		return coDao.getList();
-	}
+    public List<Company> getList() {
+        return companyDao.getList();
+    }
 
-	public List<Company> findById(int id) { 
-		return coDao.findById(id);
-	}
+    public List<Company> findById(int id) {
+        return companyDao.findById(id);
+    }
 
-	public boolean deleteCompany(String idCo) {
-		boolean isDeleted = false;
-		if (idCo != null && !Validator.isNotValidId(idCo) && !Validator.isNotValidCompany(idCo)) {
-			int idCompany = Integer.parseInt(idCo);
-			coDao.deleteCompany(idCompany);	
-			isDeleted = true;
-		}
-		
-		return isDeleted;
-	}
+    public boolean deleteCompany(String idCompany) {
+        boolean isDeleted = false;
+        if (idCompany != null && !Validator.isNotValidId(idCompany) && !Validator.isNotValidCompany(idCompany)) {
+            companyDao.deleteCompany(Integer.parseInt(idCompany));
+            isDeleted = true;
+        }
+
+        return isDeleted;
+    }
 }
