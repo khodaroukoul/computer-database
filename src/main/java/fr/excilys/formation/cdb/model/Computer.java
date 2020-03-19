@@ -1,93 +1,114 @@
 package fr.excilys.formation.cdb.model;
 
 import java.time.LocalDate;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "computer")
 public class Computer {
-	private int id;
-	private String name;
-	private LocalDate introduced;
-	private LocalDate discontinued;
-	private Company company;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-	private Computer(Builder builder) {
-		this.name = builder.name;
-		this.introduced = builder.introduced;
-		this.discontinued = builder.discontinued;
-		this.company = builder.company;
-	}
+    @Column(name = "name")
+    private String name;
 
-	public int getId() {
-		return id;
-	}
+    @Column(name = "introduced")
+    private LocalDate introduced;
 
-	public void setId(int id) {
-		this.id = id;
-	}
+    @Column(name = "discontinued")
+    private LocalDate discontinued;
 
-	public String getName() {
-		return name;
-	}
+    @ManyToOne(targetEntity = Company.class, cascade = CascadeType.ALL)
+    @JoinColumn(name = "company_id", referencedColumnName = "id")
+    private Company company;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Computer() {
+    }
 
-	public LocalDate getIntroduced() {
-		return introduced;
-	}
+    private Computer(Builder builder) {
+        this.name = builder.name;
+        this.introduced = builder.introduced;
+        this.discontinued = builder.discontinued;
+        this.company = builder.company;
+    }
 
-	public void setIntroduced(LocalDate introduced) {
-		this.introduced = introduced;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public LocalDate getDiscontinued() {
-		return discontinued;
-	}
+    public void setId(int id) {
+        this.id = id;
+    }
 
-	public void setDiscontinued(LocalDate discontinued) {
-		this.discontinued = discontinued;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public Company getCompany() {
-		return company;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setCompany(Company company) {
-		this.company = company;
-	}
+    public LocalDate getIntroduced() {
+        return introduced;
+    }
 
-	@Override
-	public String toString() {
-		return "Computer [id=" + id + ", name=" + name
-				+ ", introduced=" + introduced + ", discontinued=" + discontinued
-				+ ", company=" + company.getName() + "]";
-	}
+    public void setIntroduced(LocalDate introduced) {
+        this.introduced = introduced;
+    }
 
-	public static class Builder {
-		private final String name;
-		private LocalDate introduced;
-		private LocalDate discontinued;
-		private Company company;
+    public LocalDate getDiscontinued() {
+        return discontinued;
+    }
 
-		public Builder(String name) {
-			this.name = name;
-		}
-		public Builder setIntroduced(LocalDate introduced) {
-			this.introduced = introduced;
-			return this;
-		}
-		public Builder setDiscontinued(LocalDate discontinued) {
-			this.discontinued = discontinued;
-			return this;
-		}
-		public Builder setCompany(Company company) {
-			this.company = company;
-			return this;
-		}
+    public void setDiscontinued(LocalDate discontinued) {
+        this.discontinued = discontinued;
+    }
 
-		public Computer build() {
-			Computer computer =  new Computer(this);
-			return computer;
-		}
-	}
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    @Override
+    public String toString() {
+        return "Computer [id=" + id + ", name=" + name
+                + ", introduced=" + introduced + ", discontinued=" + discontinued
+                + ", company=" + company.getName() + "]";
+    }
+
+    public static class Builder {
+        private final String name;
+        private LocalDate introduced;
+        private LocalDate discontinued;
+        private Company company;
+
+        public Builder(String name) {
+            this.name = name;
+        }
+
+        public Builder setIntroduced(LocalDate introduced) {
+            this.introduced = introduced;
+            return this;
+        }
+
+        public Builder setDiscontinued(LocalDate discontinued) {
+            this.discontinued = discontinued;
+            return this;
+        }
+
+        public Builder setCompany(Company company) {
+            this.company = company;
+            return this;
+        }
+
+        public Computer build() {
+            Computer computer = new Computer(this);
+            return computer;
+        }
+    }
 }

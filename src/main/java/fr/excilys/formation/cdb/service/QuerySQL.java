@@ -7,13 +7,13 @@ public class QuerySQL {
         if (order != null) {
             switch (order) {
                 case "computer":
-                    orderBy = "cp.name";
+                    orderBy = "pc.name";
                     break;
                 case "introduced":
-                    orderBy = "cp.introduced";
+                    orderBy = "pc.introduced";
                     break;
                 case "discontinued":
-                    orderBy = "cp.discontinued";
+                    orderBy = "pc.discontinued";
                     break;
                 case "company":
                     orderBy = "co.name";

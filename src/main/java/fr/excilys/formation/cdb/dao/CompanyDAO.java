@@ -1,12 +1,11 @@
 package fr.excilys.formation.cdb.dao;
 
 import java.util.List;
-import javax.sql.DataSource;
+import javax.persistence.TypedQuery;
 
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import fr.excilys.formation.cdb.mapper.CompanyMapper;
 import fr.excilys.formation.cdb.model.Company;
@@ -14,29 +13,44 @@ import fr.excilys.formation.cdb.model.Company;
 @Repository
 public class CompanyDAO{
 
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private SessionFactory sessionFactory;
 	CompanyMapper companyMapper;
 
-	public CompanyDAO(DataSource dataSource, CompanyMapper companyMapper) {
-		this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+	public CompanyDAO(SessionFactory sessionFactory, CompanyMapper companyMapper) {
+		this.sessionFactory = sessionFactory;
 		this.companyMapper = companyMapper;
 	}
 
 	public List<Company> getList() {
-		return namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPANIES.getSqlCommands(), companyMapper);
+		String sqlCommand = SQLCommands.FIND_COMPANIES.getSqlCommands();
+
+		Session session = this.sessionFactory.getCurrentSession();
+		TypedQuery<Company> query = session.createQuery(sqlCommand);
+
+		return query.getResultList();
 	}
 
-	public List<Company> findById(int companyId) { 
-		MapSqlParameterSource mapParam = new MapSqlParameterSource().addValue("companyId", companyId);
+	public List<Company> findById(int companyId) {
+		String sqlCommand = SQLCommands.FIND_COMPANY.getSqlCommands();
 
-		return namedParameterJdbcTemplate.query(SQLCommands.FIND_COMPANY.getSqlCommands(), mapParam, companyMapper);
+		Session session = this.sessionFactory.getCurrentSession();
+		TypedQuery<Company> query = session.createQuery(sqlCommand);
+		query.setParameter("companyId", companyId);
+
+		return query.getResultList();
 	}
 
-	@Transactional
 	public void deleteCompany(int companyId) {
-		MapSqlParameterSource mapParam = new MapSqlParameterSource().addValue("companyId", companyId);
+		String sqlCommandDeleteComputer = SQLCommands.DELETE_COMPUTERS_BY_ID_COMPANY.getSqlCommands();
+		String sqlCommandDeleteCompany = SQLCommands.DELETE_COMPANY.getSqlCommands();
 
-		namedParameterJdbcTemplate.update(SQLCommands.DELETE_COMPUTERS_BY_ID_COMPANY.getSqlCommands(), mapParam);
-		namedParameterJdbcTemplate.update(SQLCommands.DELETE_COMPANY.getSqlCommands(), mapParam);
+		Session session = this.sessionFactory.getCurrentSession();
+		TypedQuery queryComputer = session.createQuery(sqlCommandDeleteComputer);
+		queryComputer.setParameter("companyId", companyId);
+		TypedQuery queryCompany = session.createQuery(sqlCommandDeleteCompany);
+		queryCompany.setParameter("companyId", companyId);
+
+		queryComputer.executeUpdate();
+		queryCompany.executeUpdate();
 	}
 }

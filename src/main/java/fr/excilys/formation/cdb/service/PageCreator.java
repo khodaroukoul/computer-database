@@ -41,7 +41,7 @@ public class PageCreator {
         if (computersPerPage != null) {
             pageData[1] = Integer.parseInt(computersPerPage);
         }
-        return pageData;
 
+        return pageData;
     }
 }

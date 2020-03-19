@@ -29,16 +29,17 @@ public class ComputerMapper implements RowMapper<Computer> {
                 .setId(rst.getInt("coId")).build();
 
         Computer computer = new Computer.Builder(rst.getString("name"))
-                .setIntroduced(dbDateToLocalDate(rst.getTimestamp("introduced")))
-                .setDiscontinued(dbDateToLocalDate(rst.getTimestamp("discontinued")))
+                .setIntroduced(dbToLocalDate(rst.getTimestamp("introduced")))
+                .setDiscontinued(dbToLocalDate(rst.getTimestamp("discontinued")))
                 .setCompany(company).build();
         computer.setId(rst.getInt("id"));
 
         return computer;
     }
 
-    public ComputerDTO FromComputerToComputerDTO(Computer computer) {
-        CompanyDTO companyDTO = companyMapper.FromCompanyToCompanyDTO(computer.getCompany());
+    public ComputerDTO fromComputerToComputerDTO(Computer computer) {
+        CompanyDTO companyDTO = (computer.getCompany() != null) ?
+                companyMapper.fromCompanyToCompanyDTO(computer.getCompany()) : null;
 
         ComputerDTO computerDTO = new ComputerDTO(computer.getName(),
                 localDateToDto(computer.getIntroduced()),
@@ -50,7 +51,6 @@ public class ComputerMapper implements RowMapper<Computer> {
     }
 
     public Computer fromComputerDTOToComputer(ComputerDTO computerDTO) {
-
         Company company = (computerDTO.getCompany() != null) ?
                 companyMapper.fromCompanyDTOToCompany(computerDTO.getCompany()) : null;
 
@@ -77,11 +77,11 @@ public class ComputerMapper implements RowMapper<Computer> {
         return date != null ? date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : null;
     }
 
-    public LocalDate dbDateToLocalDate(Timestamp date) {
+    public LocalDate dbToLocalDate(Timestamp date) {
         return date != null ? date.toLocalDateTime().toLocalDate() : null;
     }
 
-    public Timestamp localDatetoDbDate(LocalDate date) {
+    public Timestamp localDatetoDb(LocalDate date) {
         return date != null ? Timestamp.valueOf(date.atStartOfDay()) : null;
     }
 }

@@ -29,9 +29,24 @@
 		<apache-lang3-version>3.9</apache-lang3-version>
 		<maven-checkstyle-version>3.1.1</maven-checkstyle-version>
 		<spring-version>5.2.4.RELEASE</spring-version>
+		<hibernate-version>5.4.12.Final</hibernate-version>
 	</properties>
 
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-core -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate-version}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-orm -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.springframework/spring-web -->
 		<dependency>
 			<groupId>org.springframework</groupId>

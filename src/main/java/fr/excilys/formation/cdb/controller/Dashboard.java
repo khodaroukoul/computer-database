@@ -59,11 +59,11 @@ public class Dashboard {
     }
 
     @PostMapping(value = "/deleteComputer")
-    public ModelAndView deleteComputer(@RequestParam(value = "selection") String deletePcList) {
+    public ModelAndView deleteComputer(@RequestParam(value = "selection") String deleteComputerList) {
 
         ModelAndView modelAndView = new ModelAndView("redirect:/dashboard");
-        if (!deletePcList.isBlank()) {
-            computerService.delete(deletePcList);
+        if (!deleteComputerList.isBlank()) {
+            computerService.delete(deleteComputerList);
             modelAndView.addObject("successMsg", ShowMessages.SUCCESS_MSG_DELETE.getMsg());
         }
 

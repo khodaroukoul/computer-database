@@ -49,10 +49,10 @@ public class EditComputer {
         try {
             Validator.validateComputerId(computerId);
             List<Computer> computer = computerService.findById(Integer.parseInt(computerId));
-            ComputerDTO computerDTO = computerMapper.FromComputerToComputerDTO(computer.get(0));
+            ComputerDTO computerDTO = computerMapper.fromComputerToComputerDTO(computer.get(0));
 
             List<Company> companies = companyService.getList();
-            List<CompanyDTO> companiesDTO = companies.stream().map(companyMapper::FromCompanyToCompanyDTO)
+            List<CompanyDTO> companiesDTO = companies.stream().map(companyMapper :: fromCompanyToCompanyDTO)
                     .collect(Collectors.toList());
 
             modelAndView.addObject("computer", computerDTO);

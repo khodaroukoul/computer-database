@@ -46,7 +46,7 @@ public class AddComputer {
         Dashboard.setMessage("errorMsg", errorMsg, modelAndView);
 
         List<Company> companies = companyService.getList();
-        List<CompanyDTO> companiesDTO = companies.stream().map(companyMapper::FromCompanyToCompanyDTO)
+        List<CompanyDTO> companiesDTO = companies.stream().map(companyMapper :: fromCompanyToCompanyDTO)
                 .collect(Collectors.toList());
 
         modelAndView.addObject("companies", companiesDTO);

@@ -1,7 +1,5 @@
 package fr.excilys.formation.cdb.dto;
 
-import java.io.Serializable;
-
 public class ComputerDTO {
 
 	private int id;

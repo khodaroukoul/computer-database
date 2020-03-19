@@ -1,54 +1,30 @@
 package fr.excilys.formation.cdb.configuration;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRegistration;
 
 @Configuration
 @PropertySource("classpath:application.properties")
 @ComponentScan(basePackages = {"fr.excilys.formation.cdb.controller",
 		"fr.excilys.formation.cdb.dao","fr.excilys.formation.cdb.service",
-		"fr.excilys.formation.cdb.validator","fr.excilys.formation.cdb.mapper"})
+		"fr.excilys.formation.cdb.validator","fr.excilys.formation.cdb.mapper",
+		"fr.excilys.formation.cdb.model"})
 public class SpringConfig  implements WebApplicationInitializer {
 
-	Environment environment;
-
-	private final String DRIVER = "dataSource.driverClassName";
-	private final String URL = "dataSource.jdbcUrl";
-	private final String USER = "dataSource.username";
-	private final String PASSWORD = "dataSource.password";
-
-	@Bean
-	DataSource dataSource(Environment environment) {
-		DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-
-		driverManagerDataSource.setDriverClassName(environment.getRequiredProperty(DRIVER));
-		driverManagerDataSource.setUrl(environment.getRequiredProperty(URL));
-		driverManagerDataSource.setUsername(environment.getRequiredProperty(USER));
-		driverManagerDataSource.setPassword(environment.getRequiredProperty(PASSWORD));
-		
-		return driverManagerDataSource;
-	}
-
 	@Override
-	public void onStartup(ServletContext container) throws ServletException {
+	public void onStartup(ServletContext container) {
 		AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
-		ctx.register(WebConfig.class, SpringConfig.class);
+		ctx.register(SpringConfig.class, WebConfig.class, HibernateConfig.class);
 		ctx.setServletContext(container);
-		DispatcherServlet dv = new DispatcherServlet(ctx);
-		ServletRegistration.Dynamic servlet = container.addServlet("dashboard", dv);
+		DispatcherServlet dispatcherServlet = new DispatcherServlet(ctx);
+		ServletRegistration.Dynamic servlet = container.addServlet("dashboard", dispatcherServlet);
 		servlet.setLoadOnStartup(1);
 		servlet.addMapping("/");
 	}

@@ -1,34 +1,19 @@
 package fr.excilys.formation.cdb.dao;
 
-
 public enum SQLCommands {
-    FIND_COMPUTERS("SELECT cp.id, cp.name, cp.introduced,"
-            + " cp.discontinued, co.id as coId, co.name AS coName"
-            + " FROM computer AS cp LEFT JOIN company AS co"
-            + " ON cp.company_id = co.id "),
-    FIND_COMPUTER("SELECT cp.id, cp.name, cp.introduced,"
-            + " cp.discontinued, co.id as coId, co.name AS coName"
-            + " FROM computer AS cp LEFT JOIN company AS co"
-            + " ON cp.company_id = co.id WHERE cp.id = :computerId"),
-    NEW_COMPUTER("INSERT INTO computer (id, name, introduced, discontinued, company_id)"
-            + " SELECT MAX(id)+1, :computerName, :introduced, :discontinued, :companyId FROM computer"),
-    DELETE_COMPUTER("DELETE FROM computer WHERE id = :computerId"),
-    DELETE_COMPUTERS("DELETE FROM computer WHERE id IN (:computerIds)"),
-    UPDATE_COMPUTER("UPDATE computer SET name = :computerName, introduced = :introduced,"
+    FIND_COMPUTERS("SELECT pc FROM Computer pc LEFT JOIN pc.company co "),
+    FIND_COMPUTER("SELECT pc FROM Computer pc LEFT JOIN pc.company co WHERE pc.id = :computerId"),
+    DELETE_COMPUTER("DELETE FROM Computer WHERE id = :computerId"),
+    DELETE_COMPUTERS("DELETE FROM Computer WHERE id IN (:computerIds)"),
+    UPDATE_COMPUTER("UPDATE Computer SET name = :computerName, introduced = :introduced,"
             + " discontinued = :discontinued, company_id = :companyId WHERE id = :computerId"),
-    FIND_COMPUTERS_BY_NAME("SELECT cp.id, cp.name, cp.introduced,"
-            + " cp.discontinued, co.id as coId, co.name AS coName"
-            + " FROM computer AS cp LEFT JOIN company AS co"
-            + " ON cp.company_id = co.id WHERE cp.name LIKE :computerName "),
-    COUNT_COMPUTERS_FOUND_BY_NAME("SELECT COUNT(cp.id) AS RECORDS FROM computer AS cp"
-            + "  WHERE cp.name LIKE :computerName;"),
-    COUNT_COMPUTERS("SELECT COUNT(id) AS RECORDS FROM computer;"),
-
-    FIND_COMPANIES("SELECT id, name FROM company"),
-    DELETE_COMPANY("DELETE FROM company WHERE id = :companyId;"),
-    DELETE_COMPUTERS_BY_ID_COMPANY("DELETE FROM computer WHERE company_id = :companyId"),
-    FIND_COMPANY("SELECT id, name FROM company WHERE id = :companyId"),
-    FIND_PAGE(" LIMIT :noPage, :nbLine "),
+    FIND_COMPUTERS_BY_NAME("SELECT pc FROM Computer pc LEFT JOIN pc.company co WHERE pc.name LIKE :computerName "),
+    COUNT_COMPUTERS_FOUND_BY_NAME("SELECT COUNT(pc.id) FROM Computer pc WHERE pc.name LIKE :computerName"),
+    COUNT_COMPUTERS("SELECT COUNT(pc.id) FROM Computer pc"),
+    FIND_COMPANIES("SELECT co FROM Company co"),
+    DELETE_COMPANY("DELETE FROM Company co WHERE co.id = :companyId"),
+    DELETE_COMPUTERS_BY_ID_COMPANY("DELETE FROM Computer pc WHERE pc.company.id = :companyId"),
+    FIND_COMPANY("SELECT co FROM Company co WHERE id = :companyId"),
     ORDER_BY(" ORDER BY  ");
 
     private String sqlCommands;
