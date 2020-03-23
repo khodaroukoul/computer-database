@@ -1,21 +1,21 @@
 package fr.excilys.formation.cdb.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import fr.excilys.formation.cdb.dao.ComputerDAO;
 import fr.excilys.formation.cdb.dto.ComputerDTO;
 import fr.excilys.formation.cdb.mapper.ComputerMapper;
 import fr.excilys.formation.cdb.model.Computer;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ComputerService {
 
-    private ComputerDAO computerDao;
-    private ComputerMapper computerMapper;
+    private final ComputerDAO computerDao;
+    private final ComputerMapper computerMapper;
 
     public ComputerService(ComputerDAO computerDao, ComputerMapper computerMapper) {
         this.computerDao = computerDao;
@@ -38,23 +38,18 @@ public class ComputerService {
     }
 
     @Transactional
-    public boolean deleteFromConsole(int id) {
+    public int deleteFromConsole(int id) {
         return computerDao.deleteFromConsole(id);
     }
 
     @Transactional
-    public List<Computer> findById(int id) {
+    public Optional<Computer> findById(int id) {
         return computerDao.findById(id);
     }
 
     @Transactional
     public List<Computer> findByName(String name, int noPage, int nbLine, String orderBy) {
         return computerDao.findByName(name, noPage, nbLine, orderBy);
-    }
-
-    @Transactional
-    public List<Computer> getList() {
-        return computerDao.getList();
     }
 
     @Transactional
@@ -92,13 +87,11 @@ public class ComputerService {
 
         if (searchByName != null && !searchByName.isBlank()) {
             computers = findByName(searchByName, currentPage, computersPerPage, orderBy);
-            computersDTO = computers.stream().map(computerMapper :: fromComputerToComputerDTO)
-                    .collect(Collectors.toList());
         } else {
             computers = getListPerPage(currentPage, computersPerPage, orderBy);
-            computersDTO = computers.stream().map(computerMapper :: fromComputerToComputerDTO)
-                    .collect(Collectors.toList());
         }
+        computersDTO = computers.stream().map(computerMapper::fromComputerToComputerDTO)
+                .collect(Collectors.toList());
 
         return computersDTO;
     }

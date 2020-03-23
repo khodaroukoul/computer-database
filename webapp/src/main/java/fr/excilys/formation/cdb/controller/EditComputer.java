@@ -1,16 +1,5 @@
 package fr.excilys.formation.cdb.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import fr.excilys.formation.cdb.validator.ShowMessages;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
 import fr.excilys.formation.cdb.dto.CompanyDTO;
 import fr.excilys.formation.cdb.dto.ComputerDTO;
 import fr.excilys.formation.cdb.exception.ValidationException;
@@ -20,17 +9,26 @@ import fr.excilys.formation.cdb.model.Company;
 import fr.excilys.formation.cdb.model.Computer;
 import fr.excilys.formation.cdb.service.CompanyService;
 import fr.excilys.formation.cdb.service.ComputerService;
+import fr.excilys.formation.cdb.validator.ShowMessages;
 import fr.excilys.formation.cdb.validator.Validator;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping(value = "/editComputer")
 public class EditComputer {
 
-    private String editComputer = "editComputer";
-    private ComputerService computerService;
-    private CompanyService companyService;
-    private ComputerMapper computerMapper;
-    private CompanyMapper companyMapper;
+    private final ComputerService computerService;
+    private final CompanyService companyService;
+    private final ComputerMapper computerMapper;
+    private final CompanyMapper companyMapper;
 
     public EditComputer(ComputerService computerService, CompanyService companyService, ComputerMapper computerMapper,
                         CompanyMapper companyMapper) {
@@ -49,17 +47,19 @@ public class EditComputer {
 
         try {
             Validator.validateComputerId(computerId);
-            List<Computer> computer = computerService.findById(Integer.parseInt(computerId));
-            ComputerDTO computerDTO = computerMapper.fromComputerToComputerDTO(computer.get(0));
+            Computer computer = computerService.findById(Integer.parseInt(computerId)).orElse(null);
+            assert computer != null;
+            ComputerDTO computerDTO = computerMapper.fromComputerToComputerDTO(computer);
 
             List<Company> companies = companyService.getList();
-            List<CompanyDTO> companiesDTO = companies.stream().map(companyMapper :: fromCompanyToCompanyDTO)
+            List<CompanyDTO> companiesDTO = companies.stream().map(companyMapper::fromCompanyToCompanyDTO)
                     .collect(Collectors.toList());
 
             modelAndView.addObject("computer", computerDTO);
             modelAndView.addObject("companies", companiesDTO);
             modelAndView.addObject("computerId", Integer.parseInt(computerId));
 
+            String editComputer = "editComputer";
             modelAndView.setViewName(editComputer);
         } catch (ValidationException vld) {
             modelAndView.addObject("errorMsg", vld.getMessage());
@@ -85,6 +85,7 @@ public class EditComputer {
             if (!companyId.isBlank()) {
                 companyDTO.setId(Integer.parseInt(companyId));
             }
+
             ComputerDTO computerDTO = new ComputerDTO(computerName, introduced, discontinued, companyDTO);
             computerDTO.setId(Integer.parseInt(computerId));
             Computer computer = computerMapper.fromComputerDTOToComputer(computerDTO);

@@ -1,41 +1,22 @@
 package fr.excilys.formation.cdb.mapper;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-import org.springframework.jdbc.core.RowMapper;
-
 import fr.excilys.formation.cdb.dto.CompanyDTO;
 import fr.excilys.formation.cdb.dto.ComputerDTO;
 import fr.excilys.formation.cdb.model.Company;
 import fr.excilys.formation.cdb.model.Computer;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Component
-public class ComputerMapper implements RowMapper<Computer> {
-    private CompanyMapper companyMapper;
+public class ComputerMapper {
+    private final CompanyMapper companyMapper;
 
     public ComputerMapper(CompanyMapper companyMapper) {
         this.companyMapper = companyMapper;
     }
 
-    @Override
-    public Computer mapRow(ResultSet rst, int rowNum) throws SQLException {
-        Company company = new Company.Builder()
-                .setName(rst.getString("coName"))
-                .setId(rst.getInt("coId")).build();
-
-        Computer computer = new Computer.Builder(rst.getString("name"))
-                .setIntroduced(dbToLocalDate(rst.getTimestamp("introduced")))
-                .setDiscontinued(dbToLocalDate(rst.getTimestamp("discontinued")))
-                .setCompany(company).build();
-        computer.setId(rst.getInt("id"));
-
-        return computer;
-    }
 
     public ComputerDTO fromComputerToComputerDTO(Computer computer) {
         CompanyDTO companyDTO = (computer.getCompany() != null) ?
@@ -77,11 +58,4 @@ public class ComputerMapper implements RowMapper<Computer> {
         return date != null ? date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : null;
     }
 
-    public LocalDate dbToLocalDate(Timestamp date) {
-        return date != null ? date.toLocalDateTime().toLocalDate() : null;
-    }
-
-    public Timestamp localDatetoDb(LocalDate date) {
-        return date != null ? Timestamp.valueOf(date.atStartOfDay()) : null;
-    }
 }

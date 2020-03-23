@@ -1,6 +1,13 @@
 package fr.excilys.formation.cdb.model;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
@@ -20,11 +27,12 @@ public class Computer {
     @Column(name = "discontinued")
     private LocalDate discontinued;
 
-    @ManyToOne(targetEntity = Company.class, cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "company_id", referencedColumnName = "id")
     private Company company;
 
-    public Computer() {}
+    public Computer() {
+    }
 
     private Computer(Builder builder) {
         this.name = builder.name;
@@ -45,32 +53,16 @@ public class Computer {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public LocalDate getIntroduced() {
         return introduced;
-    }
-
-    public void setIntroduced(LocalDate introduced) {
-        this.introduced = introduced;
     }
 
     public LocalDate getDiscontinued() {
         return discontinued;
     }
 
-    public void setDiscontinued(LocalDate discontinued) {
-        this.discontinued = discontinued;
-    }
-
     public Company getCompany() {
         return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
     }
 
     @Override
@@ -106,7 +98,6 @@ public class Computer {
         }
 
         public Computer build() {
-
             return new Computer(this);
         }
     }

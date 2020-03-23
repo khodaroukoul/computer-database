@@ -1,4 +1,4 @@
-<%@page language="java" contentType="text/html; charset=UTF-8"
+<%@page contentType="text/html; charset=UTF-8"
         pageEncoding="UTF-8" %>
 
 <%@ page isELIgnored="false" %>
@@ -60,7 +60,7 @@
                     <c:if test="${not empty errorMsg}">
                         <div class="alert alert-danger" role="alert">
                             <i class="fa fa-exclamation-triangle fa-2x"></i>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <strong><spring:message code="label.error" />:</strong>
+                            <strong><spring:message code="label.error"/>:</strong>
                             <c:out value="${errorMsg}"/>
                         </div>
                     </c:if>
@@ -88,7 +88,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="companyId"><spring:message code="label.company"/></label> <select
-                                    class="form-control" id="companyId" name="companyId" style="height: calc(2.25rem + 10px);">
+                                    class="form-control" id="companyId" name="companyId"
+                                    style="height: calc(2.25rem + 10px);">
                                 <c:choose>
                                 <c:when test="${empty computer.company.name}">
                                     <option value="" selected><spring:message code="label.noCompany"/></option>

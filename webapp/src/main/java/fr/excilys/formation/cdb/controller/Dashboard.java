@@ -1,29 +1,36 @@
 package fr.excilys.formation.cdb.controller;
 
-import java.util.List;
-
-import fr.excilys.formation.cdb.validator.ShowMessages;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-
 import fr.excilys.formation.cdb.dto.ComputerDTO;
 import fr.excilys.formation.cdb.model.Pagination;
 import fr.excilys.formation.cdb.service.CompanyService;
 import fr.excilys.formation.cdb.service.ComputerService;
 import fr.excilys.formation.cdb.service.PageCreator;
+import fr.excilys.formation.cdb.validator.ShowMessages;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/dashboard")
 public class Dashboard {
 
-    private String dashboard = "dashboard";
-    private ComputerService computerService;
-    private CompanyService companyService;
+    private final ComputerService computerService;
+    private final CompanyService companyService;
 
     public Dashboard(ComputerService computerService, CompanyService companyService) {
         this.computerService = computerService;
         this.companyService = companyService;
+    }
+
+    public static void setMessage(String messageName, String message, ModelAndView modelAndView) {
+        if (message != null && !message.isBlank()) {
+            modelAndView.addObject(messageName, message);
+        }
     }
 
     @GetMapping
@@ -35,6 +42,7 @@ public class Dashboard {
                                   @RequestParam(required = false, value = "search") String searchByName,
                                   @RequestParam(required = false, value = "searchCompany") String searchCompany) {
 
+        String dashboard = "dashboard";
         ModelAndView modelAndView = new ModelAndView(dashboard);
 
         setMessage("successMsg", successMsg, modelAndView);
@@ -47,7 +55,7 @@ public class Dashboard {
         companyService.deleteCompany(searchCompany);
 
         List<ComputerDTO> computersDTO = computerService.listComputerDTO(currentPage, listComputersPerPage, order,
-				searchByName);
+                searchByName);
 
         int noOfComputers = computerService.noOfComputers(searchByName);
 
@@ -73,7 +81,7 @@ public class Dashboard {
 
     private void setDashboardAttribute(String order, String searchByName, ModelAndView modelAndView, int currentPage,
                                        int computersPerPage, List<ComputerDTO> computersDTO, int noOfComputers,
-									   Pagination myPage) {
+                                       Pagination myPage) {
         modelAndView.addObject("previousPage", myPage.getPreviousPage());
         modelAndView.addObject("nextPage", myPage.getNextPage());
         modelAndView.addObject("pageBegin", myPage.getPageBegin());
@@ -85,11 +93,5 @@ public class Dashboard {
         modelAndView.addObject("order", order);
         modelAndView.addObject("search", searchByName);
         modelAndView.addObject("computers", computersDTO);
-    }
-
-    public static void setMessage(String messageName, String message, ModelAndView modelAndView) {
-        if (message != null && !message.isBlank()) {
-            modelAndView.addObject(messageName, message);
-        }
     }
 }

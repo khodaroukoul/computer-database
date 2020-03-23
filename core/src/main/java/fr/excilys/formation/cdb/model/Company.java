@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class Company {
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "name")
@@ -30,21 +30,13 @@ public class Company {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String toString() {
-        return "Company [id=" + id + ", name=" + name +"]";
+        return "Company [id=" + id + ", name=" + name + "]";
     }
 
     public static class Builder {

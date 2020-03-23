@@ -30,7 +30,7 @@ public class Validator {
 
     public static void validateFields(String computerName, String introducedDate,
                                       String discontinuedDate, String companyId) throws ValidationException {
-        String message = "";
+        String message;
         if (isNameEmpty(computerName)) {
             message = ShowMessages.ERROR_MSG_NAME.getMsg();
             throw new ValidationException(message);
@@ -79,7 +79,7 @@ public class Validator {
     public static boolean isFirstDateAfterSecond(String firstDate, String secondDate) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-		return LocalDate.parse(firstDate, dtf).isAfter(LocalDate.parse(secondDate, dtf));
+        return LocalDate.parse(firstDate, dtf).isAfter(LocalDate.parse(secondDate, dtf));
     }
 
     public static boolean isNameEmpty(String computerName) {
@@ -87,6 +87,7 @@ public class Validator {
         if (computerName.isBlank()) {
             isNameEmpty = true;
         }
+
         return isNameEmpty;
     }
 
@@ -97,6 +98,7 @@ public class Validator {
         } else if (Integer.parseInt(id) < 1) {
             isNotValid = true;
         }
+
         return isNotValid;
     }
 
