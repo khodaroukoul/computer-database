@@ -47,8 +47,7 @@ public class EditComputer {
 
         try {
             Validator.validateComputerId(computerId);
-            Computer computer = computerService.findById(Integer.parseInt(computerId)).orElse(null);
-            assert computer != null;
+            Computer computer = computerService.findById(Integer.parseInt(computerId)).get();
             ComputerDTO computerDTO = computerMapper.fromComputerToComputerDTO(computer);
 
             List<Company> companies = companyService.getList();

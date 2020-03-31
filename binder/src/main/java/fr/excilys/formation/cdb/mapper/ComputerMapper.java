@@ -57,5 +57,4 @@ public class ComputerMapper {
     public String localDateToDto(LocalDate date) {
         return date != null ? date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : null;
     }
-
 }

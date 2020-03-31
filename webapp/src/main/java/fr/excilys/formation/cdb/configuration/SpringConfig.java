@@ -20,11 +20,12 @@ public class SpringConfig implements WebApplicationInitializer {
     public void onStartup(ServletContext container) {
         DispatcherServlet dispatcherServlet;
         try (AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext()) {
-            ctx.register(SpringConfig.class, HibernateConfig.class, WebConfig.class);
+            ctx.register(SpringConfig.class, HibernateConfig.class, WebSecurityConfig.class,
+                    SecurityWebApplicationInitializer.class, WebConfig.class);
             ctx.setServletContext(container);
             dispatcherServlet = new DispatcherServlet(ctx);
         }
-        ServletRegistration.Dynamic servlet = container.addServlet("dashboard", dispatcherServlet);
+        ServletRegistration.Dynamic servlet = container.addServlet("login", dispatcherServlet);
         servlet.setLoadOnStartup(1);
         servlet.addMapping("/");
     }

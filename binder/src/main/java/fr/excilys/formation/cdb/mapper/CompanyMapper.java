@@ -15,7 +15,8 @@ public class CompanyMapper {
     }
 
     public Company fromCompanyDTOToCompany(CompanyDTO companyDTO) {
-
-        return new Company.Builder().setId(companyDTO.getId()).setName(companyDTO.getName()).build();
+        return new Company.Builder()
+                .setId(companyDTO.getId())
+                .setName(companyDTO.getName()).build();
     }
 }

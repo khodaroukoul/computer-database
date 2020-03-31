@@ -2,6 +2,9 @@ package fr.excilys.formation.cdb.configuration;
 
 import fr.excilys.formation.cdb.model.Company;
 import fr.excilys.formation.cdb.model.Computer;
+import fr.excilys.formation.cdb.model.UserRole;
+import fr.excilys.formation.cdb.model.Users;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -44,7 +47,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean factoryBean = new LocalSessionFactoryBean();
         factoryBean.setDataSource(dataSource(environment));
-        factoryBean.setAnnotatedClasses(Computer.class, Company.class);
+        factoryBean.setAnnotatedClasses(Computer.class, Company.class, Users.class, UserRole.class);
 
         return factoryBean;
     }

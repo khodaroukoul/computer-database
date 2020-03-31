@@ -27,23 +27,14 @@ public class Dashboard {
         this.companyService = companyService;
     }
 
-    public static void setMessage(String messageName, String message, ModelAndView modelAndView) {
-        if (message != null && !message.isBlank()) {
-            modelAndView.addObject(messageName, message);
-        }
-    }
-
     @GetMapping
     public ModelAndView dashboard(@RequestParam(required = false, value = "currentPage") String currentPageJsp,
                                   @RequestParam(required = false, value = "computersPerPage") String computersPerPage,
                                   @RequestParam(required = false, value = "order") String order,
                                   @RequestParam(required = false, value = "successMsg") String successMsg,
                                   @RequestParam(required = false, value = "errorMsg") String errorMsg,
-                                  @RequestParam(required = false, value = "search") String searchByName,
-                                  @RequestParam(required = false, value = "searchCompany") String searchCompany) {
-
-        String dashboard = "dashboard";
-        ModelAndView modelAndView = new ModelAndView(dashboard);
+                                  @RequestParam(required = false, value = "search") String searchByName) {
+        ModelAndView modelAndView = new ModelAndView("dashboard");
 
         setMessage("successMsg", successMsg, modelAndView);
         setMessage("errorMsg", errorMsg, modelAndView);
@@ -51,8 +42,6 @@ public class Dashboard {
         int[] pageData = PageCreator.pageData(currentPageJsp, computersPerPage);
         int currentPage = pageData[0];
         int listComputersPerPage = pageData[1];
-
-        companyService.deleteCompany(searchCompany);
 
         List<ComputerDTO> computersDTO = computerService.listComputerDTO(currentPage, listComputersPerPage, order,
                 searchByName);
@@ -79,6 +68,21 @@ public class Dashboard {
         return modelAndView;
     }
 
+    @PostMapping(value = "/deleteCompany")
+    public ModelAndView deleteCompany(@RequestParam(value = "deleteCompany") String deleteCompany) {
+
+        ModelAndView modelAndView = new ModelAndView("redirect:/dashboard");
+
+        boolean isDeleted = companyService.deleteCompany(deleteCompany);
+        if (isDeleted) {
+            modelAndView.addObject("successMsg", ShowMessages.SUCCESS_MSG_DELETE_COMPANY.getMsg());
+        } else {
+            modelAndView.addObject("errorMsg", ShowMessages.ERROR_MSG_COMPANY.getMsg());
+        }
+
+        return modelAndView;
+    }
+
     private void setDashboardAttribute(String order, String searchByName, ModelAndView modelAndView, int currentPage,
                                        int computersPerPage, List<ComputerDTO> computersDTO, int noOfComputers,
                                        Pagination myPage) {
@@ -93,5 +97,11 @@ public class Dashboard {
         modelAndView.addObject("order", order);
         modelAndView.addObject("search", searchByName);
         modelAndView.addObject("computers", computersDTO);
+    }
+
+    public static void setMessage(String messageName, String message, ModelAndView modelAndView) {
+        if (message != null && !message.isBlank()) {
+            modelAndView.addObject(messageName, message);
+        }
     }
 }

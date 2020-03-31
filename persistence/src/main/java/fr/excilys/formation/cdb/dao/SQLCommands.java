@@ -14,7 +14,8 @@ public enum SQLCommands {
     COUNT_COMPUTERS_FOUND_BY_NAME("SELECT COUNT(pc.id) FROM Computer pc WHERE pc.name LIKE :computerName"),
     COUNT_COMPUTERS("SELECT COUNT(pc.id) FROM Computer pc"),
     ORDER_BY(" ORDER BY  "),
-    LAST_ID("SELECT MAX(id) FROM computer");
+    LAST_ID("SELECT MAX(id) FROM computer"),
+    ADD_USER("FROM Users WHERE username=:username");
 
     private final String sqlCommands;
 

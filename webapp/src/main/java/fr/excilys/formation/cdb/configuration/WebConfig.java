@@ -21,8 +21,7 @@ import org.springframework.web.servlet.view.JstlView;
 public class WebConfig implements WebMvcConfigurer {
 
     @Override
-    public void configureDefaultServletHandling(
-            DefaultServletHandlerConfigurer configurer) {
+    public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
     }
 
@@ -36,9 +35,8 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry
-                .addResourceHandler("/resources/**")
-                .addResourceLocations("/resources/");
+        registry.addResourceHandler("/resources/**")
+                .addResourceLocations("/resources/").setCachePeriod(30000000);
     }
 
     @Bean("messageSource")
