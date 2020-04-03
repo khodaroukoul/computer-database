@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +65,7 @@ public class ComputerUserDetailsService implements UserDetailsService {
             userDao.addNewUser(getUser(username, password, role));
             isAdded = true;
         }
+
         return isAdded;
     }
 
@@ -73,7 +74,8 @@ public class ComputerUserDetailsService implements UserDetailsService {
     }
 
     public Users getUser(String username, String password, String role) {
-        Users user = new Users(username, new BCryptPasswordEncoder().encode(password), true);
+        String passwordEncoded = PasswordEncoderFactories.createDelegatingPasswordEncoder().encode(password);
+        Users user = new Users(username, passwordEncoded, true);
         UserRole userRole = new UserRole(user, role);
         Set<UserRole> userRoleSet = new HashSet<>();
         userRoleSet.add(userRole);
