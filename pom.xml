@@ -28,7 +28,7 @@
 		<hikariCp-version>3.4.2</hikariCp-version>
 		<apache-lang3-version>3.9</apache-lang3-version>
 		<maven-checkstyle-version>3.1.1</maven-checkstyle-version>
-		<spring-version>5.2.4.RELEASE</spring-version>
+		<spring-version>5.2.20.RELEASE</spring-version>
 	</properties>
 
 	<dependencies>
